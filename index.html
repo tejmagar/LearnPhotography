@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <path d="M20 2 L27 17 M38 20 L23 27 M20 38 L13 23 M2 20 L17 13 M7 7 L22 12 M33 33 L18 28" stroke="currentColor" stroke-width="2" fill="none"/>
+    </svg>
+    <div>
+      <h1>Camera Lab</h1>
+      <p>Course 1: how a camera turns light into a photo</p>
+    </div>
+  </div>
+  <button class="ghost" id="resetAll">Reset</button>
+</header>
+
+
+
+<main class="layout">
+  <aside class="side side-left" id="leftSide">
+    <button class="rail" data-collapse="left" title="Show camera settings" aria-label="Show camera settings">
+      <span class="rail-icon">»</span><span class="rail-text">Camera settings</span>
+    </button>
+    <div class="panel controls">
+    <div class="side-head"><h2>Camera settings</h2><button class="collapse-btn" data-collapse="left" title="Hide settings" aria-label="Hide settings">«</button></div>
+
+    <div class="ctl" data-ctl="aperture">
+      <div class="ctl-head"><label for="ap">Aperture</label><output id="apOut" class="val"></output></div>
+      <div class="iris-row">
+        <canvas id="iris" aria-hidden="true"></canvas>
+        <div class="grow">
+          <input type="range" id="ap" min="0" max="24" step="1">
+          <div class="ends"><span>wide open</span><span>closed down</span></div>
+        </div>
+      </div>
+      <p class="hint" id="apHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="lens">
+      <div class="ctl-head"><label for="lensType">Lens</label></div>
+      <select id="lensType" class="select" data-lens-select>
+        <option value="prime">Prime lens (one fixed focal length)</option>
+        <option value="zoom">Zoom lens (24 to 200 mm, f/3.5 to f/5.6)</option>
+      </select>
+      <label class="switch zoom-groups" id="zoomGroupsRow"><input type="checkbox" id="zoomGroups" data-zoom-groups checked><span>Show the moving glass groups</span></label>
+      <p class="hint" id="lensHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="focal">
+      <div class="ctl-head"><label for="fl">Focal length</label><output id="flOut" class="val"></output></div>
+      <input type="range" id="fl" min="0" max="1000" step="1">
+      <div class="chips" id="flPresets"></div>
+      <p class="hint" id="flHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="sensor">
+      <div class="ctl-head"><label>Sensor size</label><output id="senOut" class="val"></output></div>
+      <div class="seg" id="sensorSeg"></div>
+      <p class="hint" id="senHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="focus">
+      <div class="ctl-head"><label for="focus">Focus distance</label><output id="focusOut" class="val"></output></div>
+      <input type="range" id="focus" min="0" max="1000" step="1">
+      <div class="chips" id="focusPresets"></div>
+      <label class="switch macro"><input type="checkbox" id="macro"><span>Macro lens (focuses much closer)</span></label>
+      <p class="hint" id="focusHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="shutter">
+      <div class="ctl-head"><label for="sh">Shutter speed</label><output id="shOut" class="val"></output></div>
+      <input type="range" id="sh" min="0" max="36" step="1">
+      <div class="ends"><span>fast (freezes)</span><span>slow (smears)</span></div>
+      <p class="hint" id="shHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="iso">
+      <div class="ctl-head"><label for="iso">ISO</label><output id="isoOut" class="val"></output></div>
+      <input type="range" id="iso" min="0" max="22" step="1">
+      <div class="ends"><span>clean</span><span>grainy</span></div>
+      <p class="hint" id="isoHint"></p>
+    </div>
+
+    <div class="ctl" data-ctl="scene">
+      <div class="ctl-head"><label>Light in the scene</label><output id="sceneOut" class="val"></output></div>
+      <div class="seg" id="sceneSeg"></div>
+    </div>
+
+    <div class="ctl" data-ctl="handheld">
+      <label class="switch"><input type="checkbox" id="handheld"><span>Handheld (hands shake a little)</span></label>
+    </div>
+    </div>
+  </aside>
+
+  <section class="stage">
+    <section class="lessons">
+      <nav class="lesson-nav" id="lessonNav" aria-label="Lessons"></nav>
+      <article class="lesson-card" id="lessonCard"></article>
+    </section>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Inside the camera</h2>
+          <p class="sub">Side view. Light travels from the scene on the left into the camera on the right. Click a subject to focus on it. Drag it up or down (the person also left or right).</p>
+        </div>
+        <div class="ray-toggles" id="rayToggles"></div>
+      </div>
+      <div class="diagram-wrap"><canvas id="diagram"></canvas></div>
+      <div class="panel-foot">
+        <div class="foot-toggles"><label class="switch"><input type="checkbox" id="exaggerate" checked><span>Stretch focus shifts so they are easy to see</span></label>
+          <label class="switch"><input type="checkbox" id="everywhere"><span>Light goes everywhere (not only toward the lens)</span></label>
+          <label class="foot-select"><span>Current lens</span>
+            <select id="lensType2" class="select small" data-lens-select>
+              <option value="prime">Prime lens</option>
+              <option value="zoom">Zoom lens (24 to 200 mm)</option>
+            </select></label>
+          <label class="switch" id="zoomGroupsRow2"><input type="checkbox" id="zoomGroups2" data-zoom-groups checked><span>Show the moving glass groups</span></label></div>
+        <span class="note">Scene distances use a log scale. Inside the camera sizes are to scale.</span>
+      </div>
+      <div class="light-sim">
+        <button class="primary" id="playLight">▶ Play light</button>
+        <div class="ls-body">
+          <div class="ls-bar"><div id="lightBar"></div></div>
+          <p id="lightStats">Watch light leave each subject and see which part the aperture lets through.</p>
+        </div>
+      </div>
+      <div class="zoom-explain" id="zoomExplain"></div>
+      <div class="focus-explain" id="focusExplain"></div>
+      <div class="bokeh-explain" id="bokehExplain"></div>
+      <div class="ap-explain" id="apExplain"></div>
+    </div>
+
+  </section>
+
+  <aside class="side side-right" id="rightSide">
+    <button class="rail" data-collapse="right" title="Show photo preview" aria-label="Show photo preview">
+      <span class="rail-icon">«</span><span class="rail-text">Photo preview</span>
+    </button>
+    <div class="preview">
+      <div class="side-head"><h2>Preview</h2><button class="collapse-btn" data-collapse="right" title="Hide preview" aria-label="Hide preview">»</button></div>
+      <div class="panel">
+        <div class="panel-head">
+          <div><h2>The photo</h2><p class="sub">What the sensor records. Click anything to focus on it. Drag up or down to move the person.</p></div>
+          <div class="head-btns"><button class="ghost" id="flip">See it as the sensor does</button><button class="primary" id="shoot">Take photo</button></div>
+        </div>
+        <div class="photo-wrap">
+          <canvas id="photo"></canvas>
+          <div class="curtain" id="cur1"></div>
+          <div class="curtain" id="cur2"></div>
+          <div class="badge" id="badge"></div>
+          <div class="af" id="af"></div>
+        </div>
+        <div class="meter-row">
+          <div class="meter">
+            <div class="meter-scale"><span>-3</span><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span><span>+3</span></div>
+            <div class="meter-bar"><div class="needle" id="needle"></div></div>
+          </div>
+          <div class="meter-text"><strong id="meterVal"></strong><span id="meterMsg"></span></div>
+          <div class="fix">
+            <span>Fix brightness with</span>
+            <button data-fix="shutter">Shutter</button>
+            <button data-fix="iso">ISO</button>
+            <button data-fix="aperture">Aperture</button>
+          </div>
+        </div>
+      </div>
+
+        <div class="panel">
+          <h2>Blur spots on the sensor</h2>
+          <p class="sub">A point of light only stays a point when it is in focus. Otherwise it lands as a disc.</p>
+          <canvas id="spots"></canvas>
+        </div>
+        <div class="panel">
+          <h2>Numbers</h2>
+          <dl class="stats" id="stats"></dl>
+        </div>
+    </div>
+  </aside>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
