@@ -246,6 +246,31 @@
 
   const DW = 1200, DH = 470;
   const dctx = fitCanvas($('#diagram'), DW, DH);
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  // Diagram camera: zoom and pan, in diagram units.
+  const view = { scale: 1, tx: 0, ty: 0 };
+  const VIEW_MAX = 8;
+  function clampView() {
+    view.scale = clamp(view.scale, 1, VIEW_MAX);
+    view.tx = clamp(view.tx, DW - DW * view.scale, 0);
+    view.ty = clamp(view.ty, DH - DH * view.scale, 0);
+  }
+  // Zoom around a point given in screen-space diagram units (before the view transform).
+  function zoomAt(sx, sy, factor) {
+    const ns = clamp(view.scale * factor, 1, VIEW_MAX), k = ns / view.scale;
+    view.tx = sx - (sx - view.tx) * k; view.ty = sy - (sy - view.ty) * k; view.scale = ns;
+    clampView(); afterView();
+  }
+  function zoomToward(x, y, scale) {   // x, y in diagram units
+    view.scale = clamp(scale, 1, VIEW_MAX);
+    view.tx = DW / 2 - x * view.scale; view.ty = DH / 2 - y * view.scale;
+    clampView(); afterView();
+  }
+  function afterView() {
+    const z = document.getElementById('zoomLevel');
+    if (z) z.textContent = `${Math.round(view.scale * 100)}%`;
+    drawDiagram();
+  }
   let shutterAnim = null;
   let focusLineActive = false;
   let lastA = 1;
@@ -306,7 +331,9 @@
 
   function drawDiagram() {
     const ctx = dctx, G = geometry(), sh = shutterState();
-    ctx.clearRect(0, 0, DW, DH);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.setTransform(DPR * view.scale, 0, 0, DPR * view.scale, DPR * view.tx, DPR * view.ty);
     const { cy, lensX, sensorX, sc, sHalf, gH, aH } = G;
     const bodyHalf = Math.max(sHalf + 40, 100);
     const axisY = DH - 26;
@@ -1314,6 +1341,13 @@
     $('#resetAll').addEventListener('click', () => openLesson(lessonIndex));
     $('#shoot').addEventListener('click', takePhoto);
     $('#playLight').addEventListener('click', togglePhotons);
+    $('#zoomIn').addEventListener('click', () => zoomAt(DW / 2, DH / 2, 1.5));
+    $('#zoomOut').addEventListener('click', () => zoomAt(DW / 2, DH / 2, 1 / 1.5));
+    $('#zoomReset').addEventListener('click', () => { view.scale = 1; view.tx = 0; view.ty = 0; afterView(); });
+    $('#zoomLens').addEventListener('click', () => {
+      const G = geometry();
+      zoomToward((G.lensX + G.sensorX) / 2, G.cy, clamp(900 / (G.sensorX - G.lensX + 160), 1.5, 5));
+    });
     $('#flip').addEventListener('click', () => { S.flip = !S.flip; update(); });
   }
 
@@ -1840,7 +1874,26 @@
 
   function setupPointer() {
     const dc = $('#diagram'), pc = $('#photo');
-    const toDiag = (e) => { const r = dc.getBoundingClientRect(); return [((e.clientX - r.left) * DW) / r.width, ((e.clientY - r.top) * DH) / r.height]; };
+    const toScreen = (e) => { const r = dc.getBoundingClientRect(); return [((e.clientX - r.left) * DW) / r.width, ((e.clientY - r.top) * DH) / r.height]; };
+    const toDiag = (e) => { const [sx, sy] = toScreen(e); return [(sx - view.tx) / view.scale, (sy - view.ty) / view.scale]; };
+    // Which part of the lens is under the pointer: a zoom group (changes focal length) or the lens (focus).
+    const hitLens = (G, x, y) => {
+      if (Math.abs(y - G.cy) > G.gH + 14) return null;
+      const LG = lensGroups(G), fx = G.lensX - LG.gf, rx = G.lensX + LG.gr;
+      if (isZoom()) {
+        if (Math.abs(x - fx) < 11) return 'front';
+        if (Math.abs(x - rx) < 11) return 'rear';
+        if (Math.abs(x - G.lensX) < 8) return 'lens';
+        return null;
+      }
+      return x > fx - 11 && x < rx + 11 ? 'lens' : null;
+    };
+    dc.addEventListener('wheel', (e) => {
+      if (!(e.ctrlKey || e.metaKey)) return;     // plain scroll still scrolls the page
+      e.preventDefault();
+      const [sx, sy] = toScreen(e);
+      zoomAt(sx, sy, Math.exp(-e.deltaY * 0.01));
+    }, { passive: false });
     let drag = null;
 
     dc.addEventListener('pointerdown', (e) => {
@@ -1851,12 +1904,47 @@
         focusLineActive = true; drawDiagram();
         dc.setPointerCapture(e.pointerId); e.preventDefault(); return;
       }
-      if (!key) return;
+      const part = !key ? hitLens(G, x, y) : null;
+      if (part) {
+        if (focusAnim) { cancelAnimationFrame(focusAnim.raf); focusAnim = null; }
+        drag = { el: dc, lensPart: part, x0: x, s0: zoomSpacing(S.f), offset: x - G.lensX };
+        dc.setPointerCapture(e.pointerId); e.preventDefault(); return;
+      }
+      if (!key) {
+        if (view.scale > 1.001) {
+          const [sx, sy] = toScreen(e);
+          drag = { el: dc, pan: true, sx0: sx, sy0: sy, tx0: view.tx, ty0: view.ty };
+          dc.style.cursor = 'grabbing';
+          dc.setPointerCapture(e.pointerId); e.preventDefault();
+        }
+        return;
+      }
       drag = { el: dc, key, x0: e.clientX, y0: e.clientY, moved: false, offset: x - objX(G, OBJ[key].d), offY: y - (G.cy + OBJ[key].dy) };
       dc.setPointerCapture(e.pointerId); e.preventDefault();
     });
     dc.addEventListener('pointermove', (e) => {
       const [x, y] = toDiag(e), G = geometry();
+      if (drag && drag.el === dc && drag.pan) {
+        const [sx, sy] = toScreen(e);
+        view.tx = drag.tx0 + (sx - drag.sx0); view.ty = drag.ty0 + (sy - drag.sy0);
+        clampView(); drawDiagram(); return;
+      }
+      if (drag && drag.el === dc && drag.lensPart) {
+        if (drag.lensPart === 'front' || drag.lensPart === 'rear') {
+          // moving a group changes the spacing, which changes the focal length
+          const dx = x - drag.x0;
+          const sp = clamp(drag.s0 + (drag.lensPart === 'rear' ? dx : -dx) / 1.1, zoomSpacing(ZOOM.max), zoomSpacing(ZOOM.min));
+          S.f = clamp(Math.round((ZOOM.f1 * ZOOM.f2) / (ZOOM.f1 + ZOOM.f2 - sp)), ZOOM.min, ZOOM.max);
+          clampAperture();
+        } else {
+          // moving the whole lens toward or away from the sensor focuses it
+          const lensCenter = x - drag.offset;
+          const dispV = (G.sensorX - lensCenter) / G.sc;
+          const v = S.f + (dispV - S.f) / G.E;
+          S.focus = v <= S.f + 1e-4 ? Infinity : Math.max(mfd(), (S.f * v) / (v - S.f) / 1000);
+        }
+        update(); return;
+      }
       if (drag && drag.el === dc && drag.focusLine) {
         const fx = x - drag.offset;
         S.focus = fx <= G.objL + 2 ? Infinity : clamp(xToD(G, fx), mfd(), D_MAX);
@@ -1873,7 +1961,7 @@
         }
       } else {
         const key = hitObject(G, x, y);
-        dc.style.cursor = key ? 'grab' : hitFocusLine(G, x, y) ? 'ew-resize' : '';
+        dc.style.cursor = key ? 'grab' : hitFocusLine(G, x, y) || hitLens(G, x, y) ? 'ew-resize' : view.scale > 1.001 ? 'move' : '';
       }
     });
 
@@ -1895,6 +1983,7 @@
       const d = drag; drag = null;
       d.el.classList.remove('grabbing');
       if (d.focusLine) { focusLineActive = false; drawDiagram(); return; }
+      if (d.pan || d.lensPart) { dc.style.cursor = ''; return; }
       if (d.moved || e.type === 'pointercancel') return;
       if (d.el === dc) focusOn(d.key);
       else {
@@ -1934,5 +2023,6 @@
   if (hashOpts.includes('everywhere')) { S.everywhere = true; update(); }
   if (hashOpts.includes('zoom')) { S.lens = 'zoom'; S.f = clamp(S.f, ZOOM.min, ZOOM.max); clampAperture(); update(); }
   if (hashOpts.includes('play')) togglePhotons();
+  if (hashOpts.includes('closeup')) $('#zoomLens').click();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawDiagram(); drawSpots(); });
 })();

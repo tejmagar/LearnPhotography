@@ -116,7 +116,17 @@
         </div>
         <div class="ray-toggles" id="rayToggles"></div>
       </div>
-      <div class="diagram-wrap"><canvas id="diagram"></canvas></div>
+      <div class="diagram-box">
+        <div class="diagram-wrap"><canvas id="diagram"></canvas></div>
+        <p class="view-hint">Zoom: buttons, or Ctrl/⌘ + scroll, or pinch. When zoomed, drag empty space to move around. Drag the lens to focus. With the zoom lens, drag the front or rear glass group to zoom.</p>
+        <div class="view-ctl" role="toolbar" aria-label="Diagram zoom">
+          <button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button>
+          <span id="zoomLevel">100%</span>
+          <button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+          <button id="zoomLens" class="txt" title="Zoom to the lens and sensor">Lens close-up</button>
+          <button id="zoomReset" class="txt" title="Show the whole diagram">Reset</button>
+        </div>
+      </div>
       <div class="panel-foot">
         <div class="foot-toggles"><label class="switch"><input type="checkbox" id="exaggerate" checked><span>Stretch focus shifts so they are easy to see</span></label>
           <label class="switch"><input type="checkbox" id="everywhere"><span>Light goes everywhere (not only toward the lens)</span></label>
