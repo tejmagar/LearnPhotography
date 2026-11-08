@@ -50,107 +50,18 @@
 
   const DEFAULTS = {
     f: 50, N: 2.8, t: 1 / 125, iso: 100, sensor: 'ff', focus: 4, subjD: 4, wallD: 8, macro: false, scene: 'golden',
-    handheld: false, exaggerate: true, flip: false, everywhere: false, lens: 'prime', zoomGroups: true, rays: { fg: false, subj: true, wall: true, car: false, tree: false, bg: true, mtn: false },
+    handheld: false, exaggerate: true, flip: false, everywhere: false, guides: false, subjX: 0, hideFg: false, lens: 'prime', zoomGroups: true, rays: { fg: false, subj: true, wall: true, car: false, tree: false, bg: true, mtn: false },
     dy: { fg: 84, subj: -72, wall: -20, car: 34, tree: -112, bg: -150, mtn: -46 },
   };
   let S = clone(DEFAULTS);
 
-  const LESSONS = [
-    {
-      short: 'Meet the camera', title: 'Meet the camera',
-      text: 'A camera is a dark box. The lens bends light so that every point in the scene lands as a point on the sensor. The aperture is an adjustable hole that sits inside the lens, between the front and rear glass. The shutter decides how long the sensor sees light. ISO decides how much the sensor signal is boosted.',
-      tries: ['In the diagram, find the lens, the aperture blades, the shutter and the green sensor.',
-        'Click anything in the diagram or the photo (the car, a tree, the lights) and watch the lens move to focus on it.',
-        'Drag the person left or right in the diagram (or up and down in the photo) to move them closer or further away.',
-        'Drag the lights up and watch their spot on the sensor move down. The image lands upside down, and the camera flips it back. Try "See it as the sensor does" under the photo.',
-        'Look at the two pieces of glass. Both are convex (thicker in the middle), and each one bends the rays a bit further inward. Real lenses stack many pieces, some convex to bend light in and some concave to spread it a little, which cancels out color fringes and soft corners. Together they act like one convex lens.',
-        'Turn on "Light goes everywhere" under the diagram. Each subject scatters light in every direction, and the lens only catches a thin cone of it.',
-        'Follow the orange rays from the person. They leave one point, spread out, get bent by the lens and meet again at one point on the sensor. That is what "in focus" means.'],
-      preset: {}, focus: [],
-    },
-    {
-      short: 'Aperture and blur', title: 'Aperture creates background blur',
-      text: 'The blue rays come from lights far behind the person. The lens brings them together a little in front of the sensor, so they cross and spread out again. When they reach the sensor they make a disc instead of a point. That disc is blur. A wide aperture lets in a wide cone of light, so the disc is big. A narrow aperture lets in a thin cone, so the disc is small.',
-      tries: ['Press "Play light" under the diagram. Dots that hit the blades are blocked, the rest land on the sensor.',
-        'Drag the aperture from f/1.8 to f/16 and watch the blue cone get thinner.',
-        'Watch the blue disc in "Blur spots on the sensor" shrink.',
-        'In the photo, the lights change from big soft balls into small sharp points.'],
-      preset: { N: 1.8, f: 85 }, focus: ['aperture'],
-    },
-    {
-      short: 'Bokeh', title: 'How background blur (bokeh) is made',
-      text: 'Each point of the wall sends a cone of light into the lens. The lens is focused on the person, so the wall\'s cone comes together in front of the sensor and spreads out again. Every point of the wall becomes a small disc, and all those overlapping discs make the soft blur. Small lights show the single discs as bokeh balls, shaped like the aperture opening.',
-      tries: ['Drag the wall in the diagram further back and watch its orange cone cross before the sensor. The wall in the photo gets softer.',
-        'Drag the wall close behind the person: it lands almost sharp.',
-        'Set f/5.6 and look at the lights on the wall: the round balls turn into 7-sided shapes, the shape of the blades.',
-        'Read the steps in "How background blur (bokeh) is made" under the diagram as you change things.'],
-      preset: { N: 1.8, f: 85, rays: { wall: true, subj: true, bg: false } }, focus: ['aperture', 'focal'],
-    },
-    {
-      short: 'Aperture vs framing', title: 'Aperture does not change what you see',
-      text: 'The dashed white lines show the field of view. They start at the edges of the sensor and pass straight through the center of the lens. The aperture is a hole around that center, so opening or closing it never moves those lines. The framing stays the same. Only the amount of light and the amount of blur change.',
-      tries: ['Press "Play light" and follow the white dashed center ray. Close the aperture: it still passes and lands in the same place, so the framing cannot change.',
-        'Move only the aperture slider. The dashed lines and the edges of the photo stay put.',
-        'Notice how fewer rays get past the blades when you close down. That is why the photo gets darker.'],
-      preset: { N: 2.8 }, focus: ['aperture'],
-    },
-    {
-      short: 'Focal length', title: 'Focal length changes the view',
-      text: 'Focal length is the distance from the lens to F, the point where light from very far away comes together. It is set by how strongly the glass bends light. When focused at infinity the sensor sits right at F. When the lens sits further from the sensor, the lines from the sensor edges through the lens center make a narrower angle. You see less of the scene and everything looks bigger. A short focal length sees wide.',
-      tries: ['Pick 24 mm, then 135 mm. The lens moves away from the sensor and the dashed lines close in.',
-        'Switch "Lens" in the settings to Zoom lens and drag the focal length. The two glass groups move closer together as you zoom in, which makes the lens longer.',
-        'Keep f/2.8. The opening is the focal length divided by 2.8, so a longer lens has a bigger hole and the background gets blurrier.'],
-      preset: { f: 24, N: 2.8 }, focus: ['focal'],
-    },
-    {
-      short: 'Sensor size', title: 'Sensor size and crop factor',
-      text: 'The lens throws a round image into the camera. The sensor only records the part that lands on it. A smaller sensor has its edges closer to the center, so it records a narrower view with the same lens. This is the crop factor: a 50 mm lens on APS-C frames like a 75 mm lens on full frame.',
-      tries: ['Switch between Full frame, APS-C and Phone. Watch the green sensor shrink and the dashed lines narrow.',
-        'Check "35 mm equivalent" in Numbers.'],
-      preset: { f: 50, N: 2.8, sensor: 'ff' }, focus: ['sensor'],
-    },
-    {
-      short: 'Shutter speed', title: 'Shutter speed: time and motion',
-      text: 'The shutter is a pair of curtains just in front of the sensor. The first curtain opens, then the second one follows and closes it again. The time in between is the shutter speed. The car keeps moving while the sensor is uncovered, so a long time smears it across the picture.',
-      tries: ['Press "Take photo" to watch the curtains in slow motion.',
-        'Set 1/1000 s and the car is frozen. Set 1/15 s and it streaks.',
-        'Turn on Handheld and try 1/8 s. Now the whole picture is blurred by your hands.'],
-      preset: { t: 1 / 60, N: 4 }, focus: ['shutter', 'handheld'],
-    },
-    {
-      short: 'ISO', title: 'ISO: brightness with a cost',
-      text: 'ISO does not let more light in. It boosts the signal the sensor already caught. The boost also amplifies random speckle, so high ISO looks grainy. Small sensors catch less light overall, so they turn grainy sooner.',
-      tries: ['The scene is set to Night. Raise ISO until the meter reaches 0, then look at the grain.',
-        'Switch to the Phone sensor at the same ISO and compare.'],
-      preset: { scene: 'night', N: 2.8, t: 1 / 60, iso: 100 }, focus: ['iso', 'scene'],
-    },
-    {
-      short: 'Exposure triangle', title: 'The exposure triangle',
-      text: 'Aperture, shutter speed and ISO all change brightness. One "stop" doubles or halves the light. f/2.8 to f/4 is one stop less. 1/125 s to 1/60 s is one stop more. ISO 100 to 200 is one stop brighter. You trade them to get the look you want while keeping the meter at 0.',
-      tries: ['Close the aperture by two full stops (f/2.8 to f/5.6), then press "Fix brightness with Shutter".',
-        'Every choice has a side effect: aperture changes blur, shutter changes motion, ISO changes grain.'],
-      preset: {}, focus: ['aperture', 'shutter', 'iso'],
-    },
-    {
-      short: 'Focus and depth', title: 'Focus and depth of field',
-      text: 'Focusing moves the lens a tiny bit closer to or further from the sensor, so one chosen distance lands sharp. Things a little in front or behind still look acceptably sharp. That zone is the depth of field, shown as the green band in the diagram.',
-      tries: ['Drag the green focus line in the diagram. As you focus closer, the lens slides away from the sensor and the green "focus extension" grows, while the focal length stays the same.',
-        'Use the focus buttons to focus on the leaves, then on the lights. Watch the lens move.',
-        'Keep focus at 4 m and drag the person away. They leave the green band and turn soft.',
-        'At f/1.8 the green band is thin. At f/11 it is deep.'],
-      preset: { N: 1.8, f: 85, rays: { fg: true, subj: true, car: true, tree: true, bg: true, mtn: true } }, focus: ['focus', 'aperture'],
-    },
-    {
-      short: 'Too close to focus', title: 'Why a lens cannot focus too close',
-      text: 'The closer something is, the further behind the lens its rays come together. To focus, the lens moves away from the sensor so that meeting point lands on it. But the lens can only move out so far. Past that limit, the rays from a very close subject still meet behind the sensor, so it stays blurry no matter what. That limit is the minimum focus distance (about 45 cm for a normal 50 mm lens). If something is closer than one focal length, its rays never meet at all.',
-      tries: ['The person is 30 cm away. Click them: autofocus hunts back and forth and gives up.',
-        'In the diagram, the orange rays meet past the sensor ("would meet here") even with the lens fully out.',
-        'Turn on "Macro lens" and click the person again. A macro lens can move much further out, so it focuses.',
-        'Or drag the person back past the red zone.'],
-      preset: { subjD: 0.3, f: 50, N: 4, focus: 4, rays: { fg: false, car: false, bg: false } }, focus: ['focus'],
-    },
-  ];
-  let lessonIndex = 0;
+  const LAYERED_PRESET = {
+    f: 50, N: 2.8, t: 1 / 250, iso: 200, subjD: 3.5, focus: 3.5, wallD: 10, scene: 'golden', guides: true,
+    rays: { fg: true, subj: true, wall: true, car: false, tree: false, bg: false, mtn: false },
+  };
+  let currentChapter = '';
+  let showChapter = () => {};
+  let checkSamples = () => {};
 
   /* ---------------------------------------------------------------- optics */
 
@@ -1108,6 +1019,7 @@
 
   function drawPerson(x, L) {
     setWorld(x, L, OBJ.subj.d);
+    x.translate(S.subjX, 0);
     x.fillStyle = 'rgba(0,0,0,0.28)'; ellipse(x, 0, 0.01, 0.35, 0.05);
     x.fillStyle = '#2b3550'; rr(x, -0.17, 0.05, 0.15, 0.85, 0.04); rr(x, 0.02, 0.05, 0.15, 0.85, 0.04);
     x.fillStyle = '#e8e2d6'; rr(x, -0.2, 0, 0.19, 0.08, 0.03); rr(x, 0.01, 0, 0.19, 0.08, 0.03);
@@ -1152,10 +1064,12 @@
 
   const PW = 960, MARGIN = 130;
   let HITS = [], PHOTO_GEO = null;
-  function renderPhoto() {
+  // opts.canvas / opts.width draw somewhere else (gallery samples); opts.sample skips the lab overlays.
+  function renderPhoto(opts = {}) {
+    const PW = opts.width || 960;
     const sen = SENSORS[S.sensor];
     const PH = Math.round((PW * sen.h) / sen.w);
-    const pc = $('#photo');
+    const pc = opts.canvas || $('#photo');
     if (pc.width !== PW || pc.height !== PH) { pc.width = PW; pc.height = PH; }
     const m = pc.getContext('2d');
     m.setTransform(1, 0, 0, 1, 0, 0); m.globalAlpha = 1; m.globalCompositeOperation = 'source-over';
@@ -1172,15 +1086,15 @@
       const sx = (X) => L.cx + (X / Z) * k - M, sy = (Y) => L.cy - ((Y - CAM_H) / Z) * k - M;
       return { key, x1: sx(x1), x2: sx(x2), y1: sy(y2), y2: sy(y1), Z };
     };
-    HITS = [
-      box('fg', -1.1, 1.3, -0.15, 2.0, 1.0), box('fg', 0.2, 0.9, 1.1, 1.25, 1.0),
-      box('subj', -0.34, 0, 0.34, 1.75, OBJ.subj.d),
+    const hits = [
+      ...(S.hideFg ? [] : [box('fg', -1.1, 1.3, -0.15, 2.0, 1.0), box('fg', 0.2, 0.9, 1.1, 1.25, 1.0)]),
+      box('subj', S.subjX - 0.34, 0, S.subjX + 0.34, 1.75, OBJ.subj.d),
       box('wall', WALL_X1, 0, WALL_X2, WALL_H, OBJ.wall.d),
       box('car', CAR_X - 2.1, 0, CAR_X + 2.1, 1.5, CAR_Z),
       ...TREES.map((t) => box('tree', t.x - 2.2, 0, t.x + 2.2, t.h + 1, t.z)),
       box('bg', -11.7, 3.3, 11.7, 5, 30),
     ].sort((a, b) => a.Z - b.Z);
-    PHOTO_GEO = { cy: L.cy - M, k, PW, PH };
+    if (!opts.sample) { HITS = hits; PHOTO_GEO = { cy: L.cy - M, k, PW, PH }; }
     let c, x;
 
     [c, x] = layer('sky', LW, LH); drawSky(x, L); drawBlurred(m, c, sig(Infinity), -M, -M);
@@ -1228,7 +1142,7 @@
         drawBokeh(m, wb, k, pxPerMM, PW, PH);
       } },
       { z: OBJ.subj.d, draw() { [c, x] = layer('subj', LW, LH); drawPerson(x, L); drawBlurred(m, c, sig(OBJ.subj.d), -M, -M); } },
-      { z: 1.0, draw() { [c, x] = layer('fg', LW, LH); drawLeaves(x, L); drawBlurred(m, c, sig(1.0), -M, -M); } },
+      { z: 1.0, draw() { if (S.hideFg) return; [c, x] = layer('fg', LW, LH); drawLeaves(x, L); drawBlurred(m, c, sig(1.0), -M, -M); } },
     ];
     items.sort((a, b) => b.z - a.z).forEach((it) => it.draw());
 
@@ -1267,6 +1181,16 @@
       d[i] = r; d[i + 1] = g; d[i + 2] = b; d[i + 3] = 255;
     }
     m.putImageData(img, 0, 0);
+    if (opts.sample) {
+      if (S.guides) {   // a simple rule of thirds grid on samples
+        m.strokeStyle = 'rgba(255,255,255,0.55)'; m.lineWidth = Math.max(1, PW / 400); m.setLineDash([PW / 80, PW / 120]);
+        for (const t of [1 / 3, 2 / 3]) { line(m, PW * t, 0, PW * t, PH); line(m, 0, PH * t, PW, PH * t); }
+        m.setLineDash([]);
+      }
+      return;
+    }
+    drawGuides();
+    renderChecklist();
   }
   let photoQueued = false;
   function schedulePhoto() {
@@ -1296,7 +1220,6 @@
       const o = OBJ[k];
       return `<label class="pill" style="--c:${rgba(o.color, 1)}"><input type="checkbox" data-ray="${k}"><i></i><span>${o.name}</span></label>`;
     }).join('') + '<button class="pill-btn" data-rays="all">All</button><button class="pill-btn" data-rays="none">None</button>';
-    $('#lessonNav').innerHTML = LESSONS.map((l, i) => `<button data-lesson="${i}"><b>${i + 1}</b>${l.short}</button>`).join('');
 
     $('#ap').addEventListener('input', (e) => {
       const wanted = APERTURES[+e.target.value];
@@ -1338,15 +1261,22 @@
       else if (b.dataset.rays) { OBJ_KEYS.forEach((k) => { S.rays[k] = b.dataset.rays === 'all'; }); update(); }
       else if (b.dataset.sensor) { S.sensor = b.dataset.sensor; update(); }
       else if (b.dataset.scene) { S.scene = b.dataset.scene; update(); }
-      else if (b.dataset.lesson) { openLesson(+b.dataset.lesson); }
       else if (b.dataset.fix) { fixExposure(b.dataset.fix); }
     });
     $('#rayToggles').addEventListener('change', (e) => {
       const k = e.target.dataset.ray; if (k) { S.rays[k] = e.target.checked; update(); }
     });
-    $('#resetAll').addEventListener('click', () => openLesson(lessonIndex));
+    $('#resetAll').addEventListener('click', () => { const keep = { lens: S.lens }; S = Object.assign(clone(DEFAULTS), keep); clampAperture(); update(); });
     $('#shoot').addEventListener('click', takePhoto);
     $('#playLight').addEventListener('click', togglePhotons);
+    $('#guidesBtn').addEventListener('click', () => { S.guides = !S.guides; update(); });
+    $('#layeredBtn').addEventListener('click', () => {
+      const keepFlip = S.flip, keepLens = S.lens;
+      S = Object.assign(clone(DEFAULTS), clone(LAYERED_PRESET), { flip: keepFlip, lens: keepLens });
+      S.rays = Object.assign(clone(DEFAULTS.rays), LAYERED_PRESET.rays);
+      if (isZoom()) S.f = clamp(S.f, ZOOM.min, ZOOM.max);
+      clampAperture(); update();
+    });
     $('#zoomIn').addEventListener('click', () => zoomAt(DW / 2, DH / 2, 1.5));
     $('#zoomOut').addEventListener('click', () => zoomAt(DW / 2, DH / 2, 1 / 1.5));
     $('#zoomReset').addEventListener('click', () => { view.scale = 1; view.tx = 0; view.ty = 0; afterView(); });
@@ -1395,7 +1325,7 @@
     renderZoomExplain();
     $('#flOut').textContent = `${S.f} mm`;
     document.querySelectorAll('[data-f]').forEach((b) => { b.disabled = isZoom() && (+b.dataset.f < ZOOM.min || +b.dataset.f > ZOOM.max); });
-    $('#flHint').textContent = `Sees ${fovDeg(sen.w, v).toFixed(1)}° across. ${S.f < 35 ? 'Wide angle.' : S.f <= 60 ? 'Close to how your eyes see.' : 'Telephoto: zoomed in.'}`;
+    $('#flHint').textContent = `Distance from the lens center to F, where light from far away meets. Sees ${fovDeg(sen.w, v).toFixed(1)}° across. ${S.f < 35 ? 'Wide angle.' : S.f <= 60 ? 'Close to how your eyes see.' : 'Telephoto: zoomed in.'}`;
 
     $('#senOut').textContent = `${sen.w} × ${sen.h} mm`;
     $('#senHint').textContent = `Crop factor ×${cropOf(sen).toFixed(2)}, so ${S.f} mm frames like ${Math.round(S.f * cropOf(sen))} mm on full frame.`;
@@ -1407,6 +1337,7 @@
     renderApertureExplain();
     renderBokehExplain();
     const ext = v - S.f, sd = isFinite(S.focus) ? `${Math.round(S.focus * 1000)}` : '∞';
+    $('#focalMeaning').innerHTML = focalMeaningHTML(v, ext);
     $('#focusExplain').innerHTML = `
       <div class="fe-box"><span class="fe-k">Focal length</span><strong>${S.f} mm</strong>
         <p>Fixed. It is how strongly the glass bends light. Light from very far away comes together ${S.f} mm behind the lens, at point <b>F</b>. Only zooming or changing lenses changes it.</p></div>
@@ -1444,7 +1375,8 @@
     const el = $('#zoomExplain');
     if (!isZoom()) {
       el.innerHTML = `<h3>Current lens: prime</h3>
-        <p>A prime lens has one fixed focal length. Its glass never moves relative to itself, only the whole lens slides to focus. To see wider or closer you swap lenses (or walk). Pick <b>Zoom lens</b> under "Lens" in the settings to see how one lens can change its focal length.</p>`;
+        <p>A prime lens has one fixed focal length. Its glass never moves relative to itself, only the whole lens slides to focus. To see wider or closer you swap lenses (or walk). Pick <b>Zoom lens</b> under "Lens" in the settings to see how one lens can change its focal length.</p>
+        ${ringsHTML()}`;
       return;
     }
     const s = zoomSpacing(S.f), f1 = ZOOM.f1, f2 = ZOOM.f2;
@@ -1465,6 +1397,37 @@
           <p><b>Why the widest gets smaller when you zoom in.</b> The f-number is focal length ÷ opening. The opening, as seen through the front glass, does grow as you zoom in (${(ZOOM.min / ZOOM.nWide).toFixed(1)} mm at ${ZOOM.min} mm, ${(ZOOM.max / ZOOM.nTele).toFixed(1)} mm at ${ZOOM.max} mm), but slower than the focal length, so the f-number rises. Zooming in pushes a too-wide aperture to the widest allowed. Zooming back out does not widen it again by itself.</p>
           <p><b>Variable vs constant aperture.</b> Variable zooms (f/3.5 to f/5.6) are small and cheap. Constant aperture zooms (for example 24 to 70 mm f/2.8) open to f/2.8 at every focal length, which needs bigger, heavier, pricier front glass.</p>
           <p><b>Zoom vs prime:</b> a zoom gives many focal lengths in one lens. A prime is usually smaller, sharper and opens wider (f/1.4 to f/1.8) because it only has to work at one focal length.</p>
+        </div>
+      </div>
+      ${ringsHTML()}`;
+  }
+
+  // Zoom ring vs focus ring: which one changes focal length, which one adds extension.
+  function ringsHTML() {
+    const zoom = isZoom();
+    const d = isFinite(S.focus) ? S.focus : 2;              // use 2 m as the example when focused at infinity
+    const dmm = d * 1000, ext = (f) => (f * f) / (dmm - f);
+    const fs = zoom ? [24, 50, 100, 200] : [24, 35, 50, 85, 135, 200];
+    if (!fs.includes(S.f)) fs.push(S.f);
+    fs.sort((a, b) => a - b);
+    const rows = fs.map((f) => `<tr class="${f === S.f ? 'cur' : ''}"><td>${f} mm${f === S.f ? ' (now)' : ''}</td><td>+${ext(f) < 10 ? ext(f).toFixed(2) : ext(f).toFixed(1)} mm</td><td>${(f + ext(f)).toFixed(f + ext(f) < 100 ? 2 : 1)} mm</td></tr>`).join('');
+    const e = ext(S.f);
+    return `
+      <div class="rings">
+        <h3>How the lens works: ${zoom ? 'zoom ring and focus ring' : 'the focus ring'}</h3>
+        <div class="fe-cols">
+          <div>
+            ${zoom ? `<p><b>Zoom ring:</b> moves the glass groups closer together or further apart. That <b>changes the focal length</b> (${ZOOM.min} mm to ${ZOOM.max} mm), which changes how much you see.</p>` : `<p><b>No zoom ring.</b> A prime's focal length (${S.f} mm) never changes. To change it you swap to another lens.</p>`}
+            <p><b>Focus ring:</b> adds a small <b>extension</b>, moving the lens slightly further from the sensor. That changes which distance is sharp. The focal length stays ${zoom ? 'wherever you zoomed it' : 'the same'}.</p>
+            <p><b>Adding extension does not change the focal length.</b> The total distance from the lens to the sensor is called the <b>image distance</b> (lens to sensor):</p>
+            <div class="eq">image distance = ${zoom ? 'current ' : ''}focal length + focus extension</div>
+            <p class="live">Now: ${S.f} mm, focused at ${fmtD(d)}${isFinite(S.focus) ? '' : ' (example, you are at ∞)'}: extension = ${S.f}² / (${dmm.toLocaleString()} − ${S.f}) ≈ ${e.toFixed(2)} mm, so lens to sensor ≈ ${(S.f + e).toFixed(2)} mm.</p>
+          </div>
+          <div>
+            <p>${zoom ? 'Same focus distance, different zoom settings' : 'Same focus distance on different prime lenses'} (focused at ${fmtD(d)}):</p>
+            <table class="fm-table"><thead><tr><th>Focal length</th><th>Focus extension</th><th>Lens to sensor</th></tr></thead><tbody>${rows}</tbody></table>
+            <p class="dim">${zoom ? 'Zooming in really changes the focal length. Then refocusing at the same distance needs a bigger extension, because extension grows with focal length squared.' : 'Longer lenses need much more extension for the same distance, because it grows with focal length squared.'}</p>
+          </div>
         </div>
       </div>`;
   }
@@ -1526,6 +1489,57 @@
           <li><b>The finest detail.</b> Light is a wave, so even a perfectly focused point lands as a tiny dot. A smaller hole makes that dot bigger (diffraction). <span class="live">At f/${S.N} the smallest dot is ${airy.toFixed(1)} µm, ${px < 1 ? 'smaller than one pixel' : 'about ' + px.toFixed(1) + ' pixels'} on a 24 MP ${sen.label.toLowerCase()} sensor.</span> ${sweet}</li>
           <li><b>Slightly different viewpoints.</b> Rays through the top of the lens see the subject from a few mm higher than rays through the bottom. Shiny surfaces can look different across the lens, a wide aperture can see around thin things like a fence wire, and light field cameras record these directions so you can refocus after the shot.</li>
         </ul>
+      </div>`;
+  }
+
+  // "What is focal length?" with a small labelled drawing and live numbers.
+  function focalMeaningHTML(v, ext) {
+    const f = S.f, X0 = 150, FP = 300;                    // lens x, focal length in drawing units
+    const E = ext > 0 ? clamp((ext / f) * FP * 4, 8, 150) : 0;
+    const Fx = X0 + FP, Sx = Fx + E, ay = 112;
+    const near = isFinite(S.focus);
+    // a near subject's rays meet at the sensor, behind F
+    const subj = near
+      ? `<line x1="16" y1="${ay}" x2="${X0}" y2="${ay - 45}" class="fl-sub"/><line x1="16" y1="${ay}" x2="${X0}" y2="${ay + 45}" class="fl-sub"/>
+         <line x1="${X0}" y1="${ay - 45}" x2="${Sx}" y2="${ay}" class="fl-sub"/><line x1="${X0}" y1="${ay + 45}" x2="${Sx}" y2="${ay}" class="fl-sub"/>
+         <circle cx="16" cy="${ay}" r="4" class="fl-subdot"/><text x="16" y="${ay + 20}" class="fl-t sub" text-anchor="start">subject ${fmtD(S.focus)}</text>`
+      : '';
+    return `
+      <div class="fe-wide fe-meaning">
+        <h4>What is focal length?</h4>
+        <svg viewBox="0 0 640 215" class="fl-svg" role="img" aria-label="Focal length is the distance from the lens center to F. Lens to sensor equals focal length plus extension.">
+          <line x1="0" y1="${ay}" x2="640" y2="${ay}" class="fl-axis"/>
+          <line x1="16" y1="${ay - 30}" x2="${X0}" y2="${ay - 30}" class="fl-par"/><line x1="16" y1="${ay + 30}" x2="${X0}" y2="${ay + 30}" class="fl-par"/>
+          <line x1="${X0}" y1="${ay - 30}" x2="${Fx}" y2="${ay}" class="fl-par"/><line x1="${X0}" y1="${ay + 30}" x2="${Fx}" y2="${ay}" class="fl-par"/>
+          <text x="4" y="${ay - 62}" class="fl-t dim" text-anchor="start">dashed: light from very far away (parallel)</text>
+          ${subj}
+          <ellipse cx="${X0}" cy="${ay}" rx="9" ry="58" class="fl-lens"/>
+          <text x="${X0 + 14}" y="${ay - 50}" class="fl-t" text-anchor="start">lens center</text>
+          <path d="M${Fx} ${ay - 6} L${Fx + 6} ${ay} L${Fx} ${ay + 6} L${Fx - 6} ${ay} Z" class="fl-F"/>
+          <text x="${Fx}" y="${ay - 12}" class="fl-t b" text-anchor="middle">F</text>
+          <rect x="${Sx - 2}" y="${ay - 40}" width="5" height="80" class="fl-sensor"/>
+          <text x="${Sx + 8}" y="${ay - 30}" class="fl-t green" text-anchor="start">sensor</text>
+          <line x1="${X0}" y1="${ay + 72}" x2="${Fx}" y2="${ay + 72}" class="fl-dim"/>
+          <line x1="${X0}" y1="${ay + 66}" x2="${X0}" y2="${ay + 78}" class="fl-dim"/><line x1="${Fx}" y1="${ay + 66}" x2="${Fx}" y2="${ay + 78}" class="fl-dim"/>
+          <text x="${(X0 + Fx) / 2}" y="${ay + 92}" class="fl-t b" text-anchor="middle">focal length f = ${f} mm (lens center to F)</text>
+          ${E > 0 ? `<line x1="${Fx}" y1="${ay + 72}" x2="${Sx}" y2="${ay + 72}" class="fl-ext"/>
+          <text x="${Sx + 6}" y="${ay + 76}" class="fl-t green" text-anchor="start">+${ext.toFixed(2)} mm extension</text>` : ''}
+          <line x1="${X0}" y1="${ay - 82}" x2="${Sx}" y2="${ay - 82}" class="fl-dim2"/>
+          <text x="${(X0 + Sx) / 2}" y="${ay - 88}" class="fl-t" text-anchor="middle">lens to sensor = ${f} + ${ext.toFixed(2)} = ${v.toFixed(2)} mm</text>
+        </svg>
+        <div class="fe-cols">
+          <div>
+            <p><b>Focal length is a distance between two points: the lens's optical center and its focal point F.</b> F is where light from very far away, arriving as parallel rays, comes together behind the lens.</p>
+            <p>It tells you <b>how strongly the lens bends light</b>. Short focal length: bends strongly, light meets close behind the lens, wide view. Long focal length: bends gently, light meets far behind, narrow magnified view.</p>
+            <p class="dim">It is not the length of the lens barrel and not measured from the front glass. It is measured from the optical center (the principal plane), which in a real lens with many elements can sit anywhere, even outside the glass.</p>
+          </div>
+          <div>
+            <p><b>Focal length + extension = lens to sensor.</b></p>
+            <p>Focused at infinity, F sits right on the sensor, so the extension is 0 and lens to sensor equals the focal length. Light from anything closer meets <b>behind</b> F, so the lens moves out by the extension to put that meeting point on the sensor.</p>
+            <div class="eq">extension = f² / (d − f) &nbsp; lens to sensor = f + extension</div>
+            <p class="live">Now: ${f} mm + ${ext.toFixed(2)} mm = ${v.toFixed(2)} mm, focused at ${fmtD(S.focus)}.${E > 0 ? ' The extension is drawn 4× larger here so you can see it.' : ''}</p>
+          </div>
+        </div>
       </div>`;
   }
 
@@ -1665,6 +1679,76 @@
       </div>`;
   }
 
+  // Composition overlay: rule of thirds and the three layers with the eye path.
+  function drawGuides() {
+    const gc = $('#guides');
+    if (!PHOTO_GEO) return;
+    const { PW, PH } = PHOTO_GEO;
+    if (gc.width !== PW || gc.height !== PH) { gc.width = PW; gc.height = PH; }
+    const ctx = gc.getContext('2d');
+    ctx.clearRect(0, 0, PW, PH);
+    gc.classList.toggle('hidden', !S.guides);
+    if (!S.guides) return;
+    // keep labels readable however small the photo is shown
+    const shown = gc.getBoundingClientRect().width || PW;
+    const u = clamp(PW / shown, 1, 4);
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1.5 * u; ctx.setLineDash([8 * u, 6 * u]);
+    for (const t of [1 / 3, 2 / 3]) { line(ctx, PW * t, 0, PW * t, PH); line(ctx, 0, PH * t, PW, PH * t); }
+    ctx.setLineDash([]);
+    const inFrame = (b) => b && b.x2 > 0 && b.x1 < PW && b.y2 > 0 && b.y1 < PH;
+    const pick = (keys) => { for (const k of keys) { const b = HITS.find((h) => h.key === k && inFrame(h)); if (b) return b; } return null; };
+    const center = (b, yBias = 0.5) => [clamp((b.x1 + b.x2) / 2, 40, PW - 40), clamp(b.y1 + (b.y2 - b.y1) * yBias, 40, PH - 40)];
+    const layers = [
+      { n: 1, name: 'Foreground', b: pick(['fg']), c: '#ff6fa8' },
+      { n: 2, name: 'Subject', b: pick(['subj']), c: '#ffb547', yb: 0.25 },
+      { n: 3, name: 'Background', b: pick(['wall', 'tree', 'bg', 'car']), c: '#57c7ff', yb: 0.3 },
+    ].filter((l) => l.b);
+    const pts = layers.map((l) => center(l.b, l.yb ?? 0.5));
+    // eye path
+    if (pts.length > 1) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 2.5 * u; ctx.setLineDash([10 * u, 8 * u]);
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) {
+        const [ax, ay] = pts[i - 1], [bx, by] = pts[i];
+        ctx.quadraticCurveTo((ax + bx) / 2, Math.min(ay, by) - 60, bx, by);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    layers.forEach((l, i) => {
+      const [x, y] = pts[i];
+      ctx.strokeStyle = l.c; ctx.lineWidth = 2 * u; ctx.strokeRect(l.b.x1, l.b.y1, l.b.x2 - l.b.x1, l.b.y2 - l.b.y1);
+      const fs = 12 * u;
+      ctx.fillStyle = l.c; circle(ctx, x, y, fs * 0.95);
+      text(ctx, String(l.n), x, y + u, { size: fs, align: 'center', weight: 700, color: '#111' });
+      ctx.font = `600 ${fs}px ${SANS}`; const w = ctx.measureText(l.name).width + fs;
+      const lx = x + fs * 1.3 + w > PW ? x - fs * 1.3 - w : x + fs * 1.3;
+      ctx.fillStyle = 'rgba(0,0,0,0.7)'; rr(ctx, lx, y - fs * 0.8, w, fs * 1.6, 4 * u);
+      text(ctx, l.name, lx + fs / 2, y + u, { size: fs, weight: 600, color: '#fff' });
+    });
+  }
+
+  function renderChecklist() {
+    const sen = SENSORS[S.sensor], lim = dof().c, off = evOffset();
+    const subjC = cocMM(OBJ.subj.d), bgC = cocMM(S.wallD);
+    const eq = S.f * cropOf(sen), safeT = 1 / eq;
+    const fgIn = PHOTO_GEO && HITS.some((h) => h.key === 'fg' && h.x2 > 0 && h.x1 < PHOTO_GEO.PW && h.y2 > 0 && h.y1 < PHOTO_GEO.PH);
+    const noiseOk = S.iso <= (sen.w < 15 ? 400 : sen.w < 24 ? 1600 : 3200);
+    const motion = ((CAR_SPEED * S.t) / CAR_Z) * (imgDist(S.f, S.focus) / sen.w) * 960;
+    const items = [
+      [Math.abs(off) < 0.7, 'Exposure looks right', Math.abs(off) < 0.7 ? `meter at ${off >= 0 ? '+' : ''}${off.toFixed(1)}` : `meter at ${off.toFixed(1)}, use "Fix brightness"`],
+      [subjC < lim, 'Subject is sharp', subjC < lim ? 'focus is on the person' : 'click the person to focus on them'],
+      [bgC > lim * 4, 'Background is soft', bgC > lim * 4 ? `wall blur ${bgC.toFixed(2)} mm` : 'open the aperture or move the wall back'],
+      [!!fgIn, 'Foreground layer in frame', fgIn ? 'the leaves add depth' : 'use a longer focal length or bring the leaves in'],
+      [!S.handheld || S.t <= safeT * 1.01, 'No camera shake', S.handheld ? `handheld rule: 1/${Math.round(eq)} s or faster` : 'on a tripod'],
+      [motion < 5, 'Moving things frozen', motion < 5 ? 'shutter fast enough for the car' : `car smears ${motion.toFixed(0)} px, use a faster shutter`],
+      [noiseOk, 'Low grain', noiseOk ? `ISO ${S.iso} is clean on ${sen.label.toLowerCase()}` : `ISO ${S.iso} is grainy on ${sen.label.toLowerCase()}`],
+    ];
+    const score = items.filter((i) => i[0]).length;
+    $('#checklist').innerHTML = `
+      <div class="ck-score"><b>${score}/${items.length}</b> ${score === items.length ? 'Ready. Take the photo.' : 'Fix the red items.'}</div>
+      <ul>${items.map(([ok, t, d]) => `<li class="${ok ? 'ok' : 'bad'}"><i>${ok ? '✓' : '✕'}</i><span><b>${t}</b><small>${d}</small></span></li>`).join('')}</ul>`;
+  }
+
   function renderStats() {
     const sen = SENSORS[S.sensor], v = imgDist(S.f, S.focus), crop = cropOf(sen), df = dof();
     const off = evOffset(), PWpx = PW;
@@ -1703,6 +1787,7 @@
     OBJ.wall.d = S.wallD;
     for (const k of OBJ_KEYS) OBJ[k].dy = S.dy[k];
     $('.photo-wrap').classList.toggle('flipped', S.flip);
+    $('#guidesBtn').classList.toggle('on', S.guides);
     $('#flip').classList.toggle('on', S.flip);
     if (S.focus < mfd()) S.focus = mfd();
     sync();
@@ -1711,6 +1796,7 @@
     drawSpots();
     renderStats();
     updateMeter();
+    renderChecklist();
     schedulePhoto();
     save();
   }
@@ -1756,7 +1842,7 @@
     saveTimer = setTimeout(() => {
       try {
         const out = Object.assign({}, S, { focus: isFinite(S.focus) ? S.focus : 'inf' });
-        localStorage.setItem(STORE_KEY, JSON.stringify({ lesson: lessonIndex, s: out }));
+        localStorage.setItem(STORE_KEY, JSON.stringify({ chapter: currentChapter, s: out }));
       } catch (e) { /* storage blocked: settings just won't persist */ }
     }, 250);
   }
@@ -1775,40 +1861,219 @@
       if (v.subjD >= SUBJ_MIN && v.subjD <= SUBJ_MAX) st.subjD = v.subjD;
       if (v.wallD >= WALL_MIN && v.wallD <= WALL_MAX) st.wallD = v.wallD;
       if (v.lens === 'prime' || v.lens === 'zoom') st.lens = v.lens;
-      for (const k of ['handheld', 'exaggerate', 'macro', 'flip', 'everywhere', 'zoomGroups']) if (typeof v[k] === 'boolean') st[k] = v[k];
+      if (typeof v.subjX === 'number') st.subjX = clamp(v.subjX, -3, 3);
+      for (const k of ['handheld', 'exaggerate', 'macro', 'flip', 'everywhere', 'zoomGroups', 'guides', 'hideFg']) if (typeof v[k] === 'boolean') st[k] = v[k];
       if (v.dy) for (const k of OBJ_KEYS) if (typeof v.dy[k] === 'number') st.dy[k] = clamp(v.dy[k], DY_MIN, DY_MAX);
       if (v.rays) for (const k of OBJ_KEYS) if (typeof v.rays[k] === 'boolean') st.rays[k] = v.rays[k];
-      const lesson = Number.isInteger(raw.lesson) && raw.lesson >= 0 && raw.lesson < LESSONS.length ? raw.lesson : 0;
-      return { st, lesson };
+      return { st, chapter: typeof raw.chapter === 'string' ? raw.chapter : '' };
     } catch (e) { return null; }
   }
 
-  function openLesson(i, keepSettings) {
-    lessonIndex = i;
-    const L = LESSONS[i];
-    if (!keepSettings) {
-      const p = clone(L.preset);
-      S = Object.assign(clone(DEFAULTS), p, { rays: Object.assign(clone(DEFAULTS.rays), p.rays || {}) });
+  /* ---------------------------------------------------------------- course */
+
+  // Presets come from data attributes as JSON. "t" may be "1/125", "focus" may be "inf".
+  function parsePreset(str) {
+    let p = {};
+    try { p = JSON.parse(str || '{}'); } catch (e) { return {}; }
+    if (typeof p.t === 'string') p.t = p.t.includes('/') ? 1 / +p.t.split('/')[1] : +p.t;
+    for (const k of ['focus', 'subjD', 'wallD']) if (p[k] === 'inf') p[k] = Infinity;
+    return p;
+  }
+  // A full state: defaults plus the preset (used for chapter set-up, samples and challenges).
+  function stateFrom(p) {
+    const st = Object.assign(clone(DEFAULTS), p);
+    if (p.focus === Infinity) st.focus = Infinity;
+    st.rays = Object.assign(clone(DEFAULTS.rays), p.rays || {});
+    st.dy = Object.assign(clone(DEFAULTS.dy), p.dy || {});
+    return st;
+  }
+  function applyFull(p, keepLens) {
+    const lens = S.lens;
+    S = stateFrom(p);
+    if (keepLens && !('lens' in p)) S.lens = lens;
+    if (isZoom()) S.f = clamp(S.f, ZOOM.min, ZOOM.max);
+    clampAperture(); update(); flashLab();
+  }
+  function applyTry(p) {
+    const rays = p.rays, dy = p.dy;
+    Object.assign(S, p);
+    if (p.focus === Infinity) S.focus = Infinity;
+    if (rays) S.rays = Object.assign({}, S.rays, rays);
+    if (dy) S.dy = Object.assign({}, S.dy, dy);
+    if (isZoom()) S.f = clamp(S.f, ZOOM.min, ZOOM.max);
+    clampAperture(); update(); flashLab();
+  }
+  function runAction(a) {
+    const [name, arg] = a.split(':');
+    if (name === 'play') { if (!photons.on) togglePhotons(); }
+    else if (name === 'stop') { if (photons.on) togglePhotons(); }
+    else if (name === 'everywhere') { S.everywhere = !S.everywhere; update(); }
+    else if (name === 'flip') { S.flip = !S.flip; update(); }
+    else if (name === 'guides') { S.guides = !S.guides; update(); }
+    else if (name === 'closeup') $('#zoomLens').click();
+    else if (name === 'viewreset') $('#zoomReset').click();
+    else if (name === 'shoot') takePhoto();
+    else if (name === 'focus') focusOn(arg);
+    else if (name === 'fix') fixExposure(arg);
+    else if (name === 'tab') showTab(arg);
+    flashLab();
+  }
+  // brief highlight so the reader notices the lab changed
+  function flashLab() {
+    const lab = $('#lab'); if (!lab) return;
+    lab.classList.remove('pulse'); void lab.offsetWidth; lab.classList.add('pulse');
+  }
+  function showTab(name) {
+    document.querySelectorAll('[data-tab-btn]').forEach((b) => b.classList.toggle('on', b.dataset.tabBtn === name));
+    document.querySelectorAll('[data-tab]').forEach((p) => p.classList.toggle('hidden', p.dataset.tab !== name));
+    if (name === 'spots') drawSpots();
+  }
+
+  // Gallery samples: render each one once, when it scrolls into view.
+  const sampleQueue = [];
+  let sampleBusy = false;
+  function renderSample(fig) {
+    const canvas = fig.querySelector('canvas');
+    const saved = S, sd = OBJ.subj.d, wd = OBJ.wall.d, sdy = OBJ_KEYS.map((k) => OBJ[k].dy);
+    try {
+      S = stateFrom(parsePreset(fig.dataset.sample));
+      clampAperture();
+      if (S.focus < mfd()) S.focus = mfd();
+      OBJ.subj.d = S.subjD; OBJ.wall.d = S.wallD;
+      renderPhoto({ canvas, width: 520, sample: true });
+      fig.classList.add('ready');
+    } finally {
+      S = saved; OBJ.subj.d = sd; OBJ.wall.d = wd; OBJ_KEYS.forEach((k, i) => { OBJ[k].dy = sdy[i]; });
     }
-    clampAperture();
-    document.querySelectorAll('[data-lesson]').forEach((b) => b.classList.toggle('active', +b.dataset.lesson === i));
-    $('#lessonCard').innerHTML = `
-      <div>
-        <div class="num">Lesson ${i + 1} of ${LESSONS.length}</div>
-        <h2>${L.title}</h2>
-        <p>${L.text}</p>
-      </div>
-      <div>
-        <h3>Try this</h3>
-        <ul>${L.tries.map((t) => `<li>${t}</li>`).join('')}</ul>
-      </div>
-      <div class="lesson-actions">
-        ${i > 0 ? `<button data-lesson="${i - 1}">Back</button>` : ''}
-        <button data-lesson="${i}">Reset this lesson</button>
-        ${i < LESSONS.length - 1 ? `<button class="next" data-lesson="${i + 1}">Next lesson</button>` : ''}
-      </div>`;
-    document.querySelectorAll('.ctl').forEach((c) => c.classList.toggle('focus', L.focus.includes(c.dataset.ctl)));
-    update();
+  }
+  function pumpSamples() {
+    if (sampleBusy || !sampleQueue.length) return;
+    sampleBusy = true;
+    setTimeout(() => {
+      const fig = sampleQueue.shift();
+      try { renderSample(fig); } catch (e) { fig.dataset.err = String(e && e.message); }
+      sampleBusy = false; pumpSamples();
+    }, 16);
+  }
+  function setupSamples() {
+    const figs = document.querySelectorAll('figure.sample');
+    figs.forEach((fig) => {
+      const p = parsePreset(fig.dataset.sample), st = stateFrom(p);
+      const tag = document.createElement('div');
+      tag.className = 'sample-settings';
+      tag.textContent = `${st.f} mm · f/${st.N} · ${fmtT(st.t)} · ISO ${st.iso}`;
+      fig.querySelector('figcaption').appendChild(tag);
+      const btn = document.createElement('button');
+      btn.className = 'sample-load'; btn.type = 'button'; btn.textContent = 'Load in lab';
+      btn.addEventListener('click', () => applyFull(p, false));
+      fig.appendChild(btn);
+    });
+    // render samples that are on screen or close to it
+    const pending = new Set(figs);
+    const course = $('#course');
+    const check = () => {
+      const cr = course.getBoundingClientRect();
+      const top = Math.max(cr.top, 0) - 500, bottom = Math.min(cr.bottom, window.innerHeight) + 500;
+      for (const f of pending) {
+        const r = f.getBoundingClientRect();
+        if (r.bottom > top && r.top < bottom && r.width > 0) { pending.delete(f); sampleQueue.push(f); }
+      }
+      pumpSamples();
+    };
+    course.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    checkSamples = check;
+    check();
+  }
+
+  // Table of contents, reading progress and "which chapter am I in".
+  function setupCourse() {
+    const course = $('#course'), chapters = [...document.querySelectorAll('.chapter')];
+    $('#toc').innerHTML = `
+      <div class="toc-head"><span>Course 1: the camera</span><span id="tocProgress">0%</span></div>
+      <div class="toc-bar"><div id="tocBar"></div></div>
+      <ol>${chapters.map((c, i) => `<li><button data-goto="${c.id}"><b>${i + 1}</b>${c.dataset.title}</button></li>`).join('')}</ol>`;
+    const toc = $('#toc'), tocBtn = $('#tocBtn');
+    const openToc = (open) => { toc.hidden = !open; tocBtn.setAttribute('aria-expanded', String(open)); };
+    tocBtn.addEventListener('click', (e) => { e.stopPropagation(); openToc(toc.hidden); });
+    document.addEventListener('click', (e) => { if (!toc.hidden && !e.target.closest('#tocMenu')) openToc(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') openToc(false); });
+    toc.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-goto]'); if (!b) return;
+      openToc(false);
+      if ($('.layout').classList.contains('course-hidden')) $('#toggleCourse').click();
+      showChapter(b.dataset.goto);
+    });
+    // One chapter at a time, with Previous / Next at the top and bottom.
+    chapters.forEach((ch, i) => {
+      const prev = chapters[i - 1], next = chapters[i + 1];
+      const nav = (where) => `
+        <nav class="ch-nav ${where}" aria-label="Chapter navigation">
+          ${prev ? `<button class="ch-prev" data-goto="${prev.id}"><span>← Previous</span><b>${i}. ${prev.dataset.title}</b></button>` : '<span></span>'}
+          <span class="ch-count">Chapter ${i + 1} of ${chapters.length}</span>
+          ${next ? `<button class="ch-next" data-goto="${next.id}"><span>Next →</span><b>${i + 2}. ${next.dataset.title}</b></button>` : '<span></span>'}
+        </nav>`;
+      ch.insertAdjacentHTML('afterbegin', nav('top'));
+      ch.insertAdjacentHTML('beforeend', nav('bottom'));
+    });
+    showChapter = (id) => {
+      const ch = document.getElementById(id) || chapters[0];
+      const idx = chapters.indexOf(ch);
+      chapters.forEach((c) => c.classList.toggle('active', c === ch));
+      course.scrollTop = 0;
+      currentChapter = ch.id;
+      document.querySelectorAll('#toc [data-goto]').forEach((b) => b.classList.toggle('on', b.dataset.goto === ch.id));
+      const focus = ch.dataset.focus ? ch.dataset.focus.split(',') : [];
+      document.querySelectorAll('.ctl').forEach((c) => c.classList.toggle('focus', focus.includes(c.dataset.ctl)));
+      $('#labChapter').textContent = `Chapter ${idx + 1}: ${ch.dataset.title}`;
+      $('#tocCur').textContent = `${idx + 1}. ${ch.dataset.title}`;
+      const pct = Math.round(((idx + 1) / chapters.length) * 100);
+      $('#tocBar').style.width = `${pct}%`; $('#tocBtnBar').style.width = `${pct}%`;
+      $('#tocProgress').textContent = `${idx + 1} of ${chapters.length}`;
+      save();
+      setTimeout(() => checkSamples(), 30);
+    };
+    course.addEventListener('click', (e) => {
+      const b = e.target.closest('.ch-nav [data-goto]'); if (!b) return;
+      e.stopPropagation(); showChapter(b.dataset.goto);
+    });
+    showChapter(chapters[0].id);
+
+    // buttons inside the course
+    course.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.setup !== undefined) applyFull(parsePreset(b.dataset.setup), true);
+      else if (b.dataset.try !== undefined) applyTry(parsePreset(b.dataset.try));
+      else if (b.dataset.action) runAction(b.dataset.action);
+    });
+
+    // show or hide the course column
+    const KEY = 'cameraLab.ui';
+    let ui = {};
+    try { ui = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { /* ignore */ }
+    if (ui.courseLeft === undefined) ui.courseLeft = false;      // reading on the right by default
+    const applyUI = () => {
+      $('.layout').classList.toggle('course-hidden', !!ui.hideCourse);
+      $('.layout').classList.toggle('course-right', !ui.courseLeft);
+      $('#toggleCourse').textContent = ui.hideCourse ? 'Show course' : 'Hide course';
+      $('#swapSides').textContent = ui.courseLeft ? 'Course on right' : 'Course on left';
+      setTimeout(() => { drawDiagram(); drawGuides(); }, 260);
+    };
+    $('#swapSides').addEventListener('click', () => {
+      ui.courseLeft = !ui.courseLeft; applyUI();
+      try { localStorage.setItem(KEY, JSON.stringify(ui)); } catch (e) { /* ignore */ }
+    });
+    $('#toggleCourse').addEventListener('click', () => {
+      ui.hideCourse = !ui.hideCourse; applyUI();
+      try { localStorage.setItem(KEY, JSON.stringify(ui)); } catch (e) { /* ignore */ }
+    });
+    applyUI();
+
+    // lab tabs
+    document.querySelectorAll('[data-tab-btn]').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tabBtn)));
+    showTab('settings');
+    return (id) => { if (id) showChapter(id); };
   }
 
   /* ------------------------------------- autofocus: click a subject */
@@ -1987,16 +2252,22 @@
     });
 
     pc.addEventListener('pointerdown', (e) => {
-      drag = { el: pc, x0: e.clientX, y0: e.clientY, d0: S.subjD, moved: false };
+      drag = { el: pc, x0: e.clientX, y0: e.clientY, d0: S.subjD, sx0: S.subjX, moved: false };
       pc.setPointerCapture(e.pointerId); e.preventDefault();
     });
     pc.addEventListener('pointermove', (e) => {
       if (!drag || drag.el !== pc) return;
-      if (Math.abs(e.clientY - drag.y0) > 5) drag.moved = true;
+      if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 5) drag.moved = true;
       if (!drag.moved) return;
       pc.classList.add('grabbing');
-      const dy = ((drag.y0 - e.clientY) / pc.getBoundingClientRect().height) * (S.flip ? -1 : 1);
-      S.subjD = clamp(drag.d0 * Math.exp(dy * 3), SUBJ_MIN, SUBJ_MAX); update();
+      const r = pc.getBoundingClientRect(), flip = S.flip ? -1 : 1;
+      const dy = ((drag.y0 - e.clientY) / r.height) * flip;
+      S.subjD = clamp(drag.d0 * Math.exp(dy * 3), SUBJ_MIN, SUBJ_MAX);
+      if (PHOTO_GEO) {
+        const dpx = ((e.clientX - drag.x0) * PHOTO_GEO.PW) / r.width * flip;
+        S.subjX = clamp(drag.sx0 + (dpx / PHOTO_GEO.k) * S.subjD, -3, 3);
+      }
+      update();
     });
 
     const end = (e) => {
@@ -2017,28 +2288,384 @@
     ['pointerup', 'pointercancel'].forEach((ev) => { dc.addEventListener(ev, end); pc.addEventListener(ev, end); });
   }
 
-  // Collapsible side columns, remembered separately from the camera settings.
-  function setupSides() {
-    const KEY = 'cameraLab.ui', layout = $('.layout');
-    let ui = { left: false, right: false };
-    try { ui = Object.assign(ui, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* ignore */ }
-    const apply = () => {
-      layout.classList.toggle('left-collapsed', !!ui.left);
-      layout.classList.toggle('right-collapsed', !!ui.right);
+  /* ------------------------------------------- resizable split, floating panels */
+
+  function setupLayoutTools() {
+    const KEY = 'cameraLab.layout', layout = $('.layout'), lab = $('#lab');
+    let st = { courseW: null, photo: { on: false }, tabs: { on: false } };
+    try { st = Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* ignore */ }
+    const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignore */ } };
+    const desktop = () => window.innerWidth > 1100;
+    const redraw = () => { drawDiagram(); drawGuides(); };
+
+    // ---- separator between the lab and the course
+    const applyWidth = () => {
+      if (st.courseW) layout.style.setProperty('--courseW', `${st.courseW}px`);
+      else layout.style.removeProperty('--courseW');
     };
-    apply();
-    document.querySelectorAll('[data-collapse]').forEach((b) => b.addEventListener('click', () => {
-      const side = b.dataset.collapse;
-      ui[side] = !ui[side]; apply();
-      try { localStorage.setItem(KEY, JSON.stringify(ui)); } catch (e) { /* ignore */ }
+    const clampW = (w) => clamp(w, 320, Math.max(320, layout.clientWidth - 440));
+    const sp = $('#splitter');
+    let dragW = null;
+    sp.addEventListener('pointerdown', (e) => {
+      if (!desktop()) return;
+      dragW = { right: layout.classList.contains('course-right') };
+      sp.setPointerCapture(e.pointerId); layout.classList.add('resizing'); e.preventDefault();
+    });
+    sp.addEventListener('pointermove', (e) => {
+      if (!dragW) return;
+      const r = layout.getBoundingClientRect();
+      st.courseW = Math.round(clampW(dragW.right ? r.right - e.clientX : e.clientX - r.left));
+      applyWidth(); drawDiagram();
+    });
+    const endW = () => { if (!dragW) return; dragW = null; layout.classList.remove('resizing'); persist(); redraw(); };
+    sp.addEventListener('pointerup', endW); sp.addEventListener('pointercancel', endW);
+    sp.addEventListener('dblclick', () => { st.courseW = null; applyWidth(); persist(); setTimeout(redraw, 50); });
+    sp.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const cur = $('#course').getBoundingClientRect().width;
+      const toward = layout.classList.contains('course-right') ? (e.key === 'ArrowLeft' ? 1 : -1) : (e.key === 'ArrowRight' ? 1 : -1);
+      st.courseW = Math.round(clampW(cur + toward * 24)); applyWidth(); persist(); redraw(); e.preventDefault();
+    });
+
+    // ---- floating panels
+    const panels = { photo: $('#photoPanel'), tabs: $('#tabsPanel') };
+    const keepOnScreen = (p) => {
+      p.x = clamp(p.x, 0, Math.max(0, window.innerWidth - 120));
+      p.y = clamp(p.y, 0, Math.max(0, window.innerHeight - 60));
+    };
+    const applyFloat = () => {
+      for (const name of Object.keys(panels)) {
+        const el = panels[name], p = st[name], on = !!p.on && desktop();
+        el.classList.toggle('floating', on);
+        el.querySelector('[data-float]').textContent = on ? 'Dock panel' : 'Float panel';
+        el.querySelector('[data-more]').classList.toggle('on', on);
+        if (on) {
+          keepOnScreen(p);
+          Object.assign(el.style, { left: `${p.x}px`, top: `${p.y}px`, width: `${p.w}px`, height: `${p.h}px` });
+        } else {
+          ['left', 'top', 'width', 'height'].forEach((k) => { el.style[k] = ''; });
+        }
+      }
+      const pf = panels.photo.classList.contains('floating'), tf = panels.tabs.classList.contains('floating');
+      lab.classList.toggle('photo-floating', pf && !tf);
+      lab.classList.toggle('tabs-floating', tf && !pf);
+      lab.classList.toggle('both-floating', pf && tf);
+      setTimeout(redraw, 30);
+    };
+    // the ⋮ menus
+    const closeMenus = () => document.querySelectorAll('.more-pop').forEach((m) => { m.hidden = true; });
+    document.querySelectorAll('[data-more]').forEach((b) => b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pop = b.nextElementSibling, open = pop.hidden;
+      closeMenus(); pop.hidden = !open;
     }));
+    document.addEventListener('click', (e) => { if (!e.target.closest('.more-menu')) closeMenus(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenus(); });
+    document.querySelectorAll('[data-float]').forEach((b) => b.addEventListener('click', (e) => {
+      e.stopPropagation(); closeMenus();
+      const name = b.dataset.float, p = st[name], el = panels[name];
+      if (!p.on) {
+        const r = el.getBoundingClientRect();
+        const w = p.w || Math.round(Math.min(r.width, name === 'photo' ? 460 : 380));
+        const h = p.h || Math.round(Math.min(window.innerHeight * 0.7, name === 'photo' ? 520 : 600));
+        Object.assign(p, {
+          w, h,
+          x: p.x ?? (window.innerWidth - w - 24 - (name === 'tabs' ? 480 : 0)),
+          y: p.y ?? (window.innerHeight - h - 24),
+        });
+      }
+      p.on = !p.on; applyFloat(); persist();
+    }));
+    let drag = null, zTop = 60;
+    document.querySelectorAll('[data-drag]').forEach((bar) => {
+      const name = bar.dataset.drag, el = panels[name];
+      el.addEventListener('pointerdown', () => { if (el.classList.contains('floating')) el.style.zIndex = String(++zTop); });
+      bar.addEventListener('pointerdown', (e) => {
+        if (!el.classList.contains('floating') || e.target.closest('button')) return;
+        drag = { name, el, bar, dx: e.clientX - st[name].x, dy: e.clientY - st[name].y };
+        bar.setPointerCapture(e.pointerId); bar.classList.add('dragging'); e.preventDefault();
+      });
+      bar.addEventListener('pointermove', (e) => {
+        if (!drag || drag.bar !== bar) return;
+        const p = st[name];
+        p.x = e.clientX - drag.dx; p.y = e.clientY - drag.dy; keepOnScreen(p);
+        el.style.left = `${p.x}px`; el.style.top = `${p.y}px`;
+      });
+      const end = () => { if (!drag || drag.bar !== bar) return; bar.classList.remove('dragging'); drag = null; persist(); };
+      bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
+    });
+    // remember the size after the user resizes a floating panel from its corner
+    if (window.ResizeObserver) {
+      let t = null;
+      const ro = new ResizeObserver(() => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          for (const name of Object.keys(panels)) {
+            const el = panels[name];
+            if (!el.classList.contains('floating')) continue;
+            st[name].w = Math.round(el.offsetWidth); st[name].h = Math.round(el.offsetHeight);
+          }
+          persist();
+        }, 200);
+      });
+      Object.values(panels).forEach((el) => ro.observe(el));
+    }
+    window.addEventListener('resize', () => { applyFloat(); });
+    applyWidth(); applyFloat();
   }
 
+  /* ------------------------------------------- real-photo composition lessons */
+
+  function setupPhotoLessons() {
+    const src = (id) => `images/composition/${id}.jpg`;
+
+    // annotated photos: show or hide the drawn guides
+    document.querySelectorAll('.ph .tag').forEach((t) => { t.style.maxWidth = `${97 - parseFloat(t.style.left || 0)}%`; });
+    document.querySelectorAll('.photo-ex .ph').forEach((ph) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'guide-btn'; b.textContent = 'Hide guides';
+      b.addEventListener('click', () => { const clean = ph.classList.toggle('clean'); b.textContent = clean ? 'Show guides' : 'Hide guides'; });
+      ph.appendChild(b);
+    });
+
+    // crop quizzes: three crops of one photo, pick the best
+    const cropStyle = (el, W, H, l, t, w, h) => {
+      Object.assign(el.style, {
+        aspectRatio: `${(w * W) / (h * H)}`,
+        backgroundSize: `${10000 / w}% ${10000 / h}%`,
+        backgroundPosition: `${w >= 100 ? 0 : (l / (100 - w)) * 100}% ${h >= 100 ? 0 : (t / (100 - h)) * 100}%`,
+      });
+    };
+    document.querySelectorAll('.crop-quiz').forEach((q) => {
+      const url = src(q.dataset.img), img = new Image();
+      img.onload = () => {
+        q.querySelectorAll('.cq-opt').forEach((o) => {
+          const th = o.querySelector('.cq-thumb'), [l, t, w, h] = o.dataset.crop.split(',').map(Number);
+          th.style.backgroundImage = `url("${url}")`;
+          cropStyle(th, img.naturalWidth, img.naturalHeight, l, t, w, h);
+        });
+      };
+      img.src = url;
+      const answer = +q.dataset.answer;
+      q.querySelectorAll('.cq-opt').forEach((o, i) => o.addEventListener('click', () => {
+        q.querySelectorAll('.cq-opt').forEach((x, j) => {
+          x.classList.toggle('right', j === answer);
+          x.classList.toggle('wrong', j === i && i !== answer);
+          x.classList.toggle('picked', j === i);
+        });
+        q.querySelector('.cq-why').hidden = false;
+      }));
+    });
+
+    // crop trainer
+    const T = $('#trainer'); if (!T) return;
+    const POI = {
+      505: { subj: [0.605, 0.57], horizon: 0.665, good: [0.205, 0.265, 0.6] },
+      853: { subj: [0.72, 0.73], horizon: 0.37, good: [0, 0, 1] },
+      1005: { subj: [0.53, 0.42], gaze: 'right', good: [0.33, 0.22, 0.6] },
+      447: { subj: [0.5, 0.5], horizon: 0.62, good: [0.3, 0.22, 0.6] },
+    };
+    const imgEl = $('#trImg'), box = $('#trCrop'), stage = T.querySelector('.tr-stage');
+    let cur = '505', ratio = 1.5, A = 1.5, c = { x: 0.1, y: 0.1, w: 0.8, h: 0.8 };
+    const hFor = (w) => (w * A) / ratio;
+    const fit = () => {             // keep the crop inside the photo with the right shape
+      c.w = clamp(c.w, 0.08, 1); c.h = hFor(c.w);
+      if (c.h > 1) { c.h = 1; c.w = ratio / A; }
+      c.x = clamp(c.x, 0, 1 - c.w); c.y = clamp(c.y, 0, 1 - c.h);
+    };
+    const render = () => {
+      Object.assign(box.style, { left: `${c.x * 100}%`, top: `${c.y * 100}%`, width: `${c.w * 100}%`, height: `${c.h * 100}%` });
+      feedback();
+    };
+    const feedback = () => {
+      const p = POI[cur], out = [];
+      const sx = (p.subj[0] - c.x) / c.w, sy = (p.subj[1] - c.y) / c.h;
+      if (sx < 0.03 || sx > 0.97 || sy < 0.03 || sy > 0.97) out.push(['bad', 'The subject is cut off or outside the crop.']);
+      else {
+        const d = Math.min(...[[1 / 3, 1 / 3], [2 / 3, 1 / 3], [1 / 3, 2 / 3], [2 / 3, 2 / 3]].map(([a, b]) => Math.hypot(sx - a, sy - b)));
+        if (d < 0.09) out.push(['ok', 'Subject sits on a thirds crossing.']);
+        else if (Math.abs(sx - 0.5) < 0.07 && Math.abs(sy - 0.5) < 0.1) out.push(['warn', 'Subject is centered: calm and formal. Try a third for more energy.']);
+        else if (Math.min(Math.abs(sx - 1 / 3), Math.abs(sx - 2 / 3)) < 0.06) out.push(['ok', 'Subject sits on a vertical thirds line.']);
+        else out.push(['warn', 'Move the subject closer to a thirds line or crossing.']);
+        if (sx < 0.12 || sx > 0.88 || sy < 0.1 || sy > 0.9) out.push(['warn', 'The subject is very close to the edge. Give it a little breathing room.']);
+      }
+      if (p.horizon !== undefined) {
+        const hy = (p.horizon - c.y) / c.h;
+        if (hy > 0.02 && hy < 0.98) {
+          if (Math.min(Math.abs(hy - 1 / 3), Math.abs(hy - 2 / 3)) < 0.06) out.push(['ok', `Horizon on the ${hy < 0.5 ? 'upper' : 'lower'} third line.`]);
+          else if (Math.abs(hy - 0.5) < 0.07) out.push(['warn', 'Horizon cuts the frame in half. Move it to a third line.']);
+          else out.push(['warn', 'Put the horizon on one of the third lines.']);
+        } else out.push(['warn', 'The horizon is out of the crop, so the photo loses its sense of place.']);
+      }
+      if (p.gaze === 'right' && sx > 0.03 && sx < 0.97) {
+        out.push(sx < 0.5 ? ['ok', 'Space in front of the face: she looks into the frame.'] : ['warn', 'She looks toward the edge. Leave room in the direction she looks.']);
+      }
+      if (c.w < 0.3) out.push(['warn', 'A very tight crop throws away a lot of pixels and quality.']);
+      const good = out.filter((o) => o[0] === 'ok').length, total = out.length;
+      $('#trFeedback').innerHTML = `<li class="score"><b>${good}/${total}</b> ${good === total ? 'Strong composition.' : 'Keep adjusting.'}</li>` +
+        out.map(([k, t]) => `<li class="${k}"><i>${k === 'ok' ? '✓' : k === 'bad' ? '✕' : '!'}</i>${t}</li>`).join('');
+    };
+    const setImage = (id) => {
+      cur = id;
+      T.querySelectorAll('[data-tr-img]').forEach((b) => b.classList.toggle('on', b.dataset.trImg === id));
+      imgEl.onload = () => { A = imgEl.naturalWidth / imgEl.naturalHeight; reset(); };
+      imgEl.src = src(id);
+    };
+    const setRatio = (r) => {
+      const cx = c.x + c.w / 2, cy = c.y + c.h / 2;
+      ratio = r;
+      T.querySelectorAll('[data-tr-ratio]').forEach((b) => b.classList.toggle('on', Math.abs(+b.dataset.trRatio - r) < 0.01));
+      c.h = hFor(c.w); if (c.h > 0.9) { c.h = 0.9; c.w = (c.h * ratio) / A; }
+      c.x = cx - c.w / 2; c.y = cy - c.h / 2; fit(); render();
+    };
+    // start with the subject dead center, so there is something to improve
+    const reset = () => {
+      c.w = 0.62; c.h = hFor(c.w); if (c.h > 0.8) { c.h = 0.8; c.w = (0.8 * ratio) / A; }
+      const [px, py] = POI[cur].subj; c.x = px - c.w / 2; c.y = py - c.h / 2; fit(); render();
+    };
+    T.querySelectorAll('[data-tr-img]').forEach((b) => b.addEventListener('click', () => setImage(b.dataset.trImg)));
+    T.querySelectorAll('[data-tr-ratio]').forEach((b) => b.addEventListener('click', () => setRatio(+b.dataset.trRatio)));
+    $('#trReset').addEventListener('click', reset);
+    $('#trGood').addEventListener('click', () => {
+      const [x, y, w] = POI[cur].good;
+      ratio = 1.5; T.querySelectorAll('[data-tr-ratio]').forEach((b) => b.classList.toggle('on', b.dataset.trRatio === '1.5'));
+      c = { x, y, w, h: hFor(w) }; fit(); render();
+    });
+
+    // drag to move, corners to resize (the opposite corner stays put)
+    let drag = null;
+    box.addEventListener('pointerdown', (e) => {
+      const r = stage.getBoundingClientRect(), h = e.target.closest('.h');
+      drag = { h: h ? [...h.classList].find((k) => k.length === 2) : null, px: e.clientX, py: e.clientY, c0: { ...c }, r };
+      box.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    box.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const dx = (e.clientX - drag.px) / drag.r.width, dy = (e.clientY - drag.py) / drag.r.height, c0 = drag.c0;
+      if (!drag.h) { c.x = c0.x + dx; c.y = c0.y + dy; }
+      else {
+        const left = drag.h[1] === 'l', top = drag.h[0] === 't';
+        const ax = left ? c0.x + c0.w : c0.x, ay = top ? c0.y + c0.h : c0.y;   // anchor corner
+        let w = c0.w + (left ? -dx : dx);
+        w = Math.min(w, left ? ax : 1 - ax, ((top ? ay : 1 - ay) * ratio) / A);
+        w = Math.max(w, 0.08);
+        c.w = w; c.h = hFor(w);
+        c.x = left ? ax - w : ax; c.y = top ? ay - c.h : ay;
+      }
+      fit(); render();
+    });
+    const end = () => { drag = null; };
+    box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
+    setRatio(1.5);
+    setImage('505');
+  }
+
+  /* ------------------------------------------------- real-world example gallery */
+
+  function setupGallery() {
+    const data = window.GALLERY || [], grid = $('#galGrid');
+    if (!grid || !data.length) return;
+    const CATS = { trees: 'Trees', mountains: 'Mountains', flowers: 'Flowers', cars: 'Cars', city: 'City', animals: 'Animals', people: 'People', water: 'Water', food: 'Food', night: 'Night' };
+    const TECH = {
+      thirds: 'Rule of thirds', leading: 'Leading lines', symmetry: 'Symmetry', framing: 'Framing', layering: 'Layering',
+      negative: 'Negative space', pattern: 'Pattern', fill: 'Fill the frame', viewpoint: 'Viewpoint', shallow: 'Shallow depth of field',
+      light: 'Light', color: 'Color contrast', contrast: 'Tonal contrast', motion: 'Motion', balance: 'Balance', scale: 'Scale',
+      eyes: 'Sharp eyes', leadroom: 'Lead room',
+    };
+    let cat = 'all', tech = 'all', shown = [], cur = 0;
+    const count = (k) => data.filter((d) => d.cat === k).length;
+    $('#galCats').innerHTML = `<button data-gcat="all">All (${data.length})</button>` +
+      Object.entries(CATS).map(([k, v]) => `<button data-gcat="${k}">${v} (${count(k)})</button>`).join('');
+    const techs = Object.keys(TECH).filter((t) => data.some((d) => d.tech.includes(t)));
+    $('#galTech').innerHTML = '<option value="all">All techniques</option>' + techs.map((t) => `<option value="${t}">${TECH[t]}</option>`).join('');
+    const src = (d) => `images/gallery/${d.id}.jpg`;
+    const draw = () => {
+      shown = data.filter((d) => (cat === 'all' || d.cat === cat) && (tech === 'all' || d.tech.includes(tech)));
+      document.querySelectorAll('[data-gcat]').forEach((b) => b.classList.toggle('on', b.dataset.gcat === cat));
+      grid.innerHTML = shown.length ? shown.map((d, i) => `
+        <button class="gal-card" data-gi="${i}" aria-label="${d.title}">
+          <span class="gal-img"><img src="${src(d)}" alt="" loading="lazy"></span>
+          <span class="gal-title">${d.title}</span>
+          <span class="gal-tags">${d.tech.map((t) => `<i class="${t === tech ? 'hit' : ''}">${TECH[t]}</i>`).join('')}</span>
+        </button>`).join('') : '<p class="gal-empty">No photos match. Try another subject or technique.</p>';
+    };
+    $('#galCats').addEventListener('click', (e) => { const b = e.target.closest('[data-gcat]'); if (b) { cat = b.dataset.gcat; draw(); } });
+    $('#galTech').addEventListener('change', (e) => { tech = e.target.value; draw(); });
+    draw();
+
+    // lightbox
+    const lb = $('#lightbox');
+    const show = (i) => {
+      cur = (i + shown.length) % shown.length;
+      const d = shown[cur];
+      $('#lbImg').src = src(d); $('#lbImg').alt = d.title;
+      $('#lbTitle').textContent = d.title;
+      $('#lbText').textContent = d.text;
+      $('#lbTags').innerHTML = `<i class="cat">${CATS[d.cat]}</i>` + d.tech.map((t) => `<i>${TECH[t]}</i>`).join('');
+      $('#lbCount').textContent = `${cur + 1} of ${shown.length}`;
+      $('#lbCredit').textContent = `Photo: ${d.by} (Unsplash)`;
+    };
+    const open = (i) => { show(i); lb.hidden = false; document.body.classList.add('lb-open'); $('#lbClose').focus(); };
+    const close = () => { lb.hidden = true; document.body.classList.remove('lb-open'); };
+    grid.addEventListener('click', (e) => { const c = e.target.closest('[data-gi]'); if (c) open(+c.dataset.gi); });
+    $('#lbClose').addEventListener('click', close);
+    $('#lbPrev').addEventListener('click', () => show(cur - 1));
+    $('#lbNext').addEventListener('click', () => show(cur + 1));
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    $('#lbThirds').addEventListener('change', (e) => $('#lbGrid').classList.toggle('hidden', !e.target.checked));
+    document.addEventListener('keydown', (e) => {
+      if (lb.hidden) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') show(cur - 1);
+      else if (e.key === 'ArrowRight') show(cur + 1);
+    });
+  }
+
+  /* ------------------------------------------------------------- full screen */
+
+  function setupFullscreen() {
+    const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+    const enter = (el) => (el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen && el.webkitRequestFullscreen());
+    const exit = () => (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen && document.webkitExitFullscreen());
+    const toggle = (el) => {
+      try { if (fsEl() === el) exit(); else { if (fsEl()) exit(); enter(el); } } catch (e) { /* not allowed here */ }
+    };
+    const supported = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+    const btnApp = $('#fullscreenApp'), btnDia = $('#fullscreenDiagram');
+    if (!supported) { btnApp.hidden = true; btnDia.hidden = true; document.querySelectorAll('[data-fullscreen]').forEach((b) => { b.hidden = true; }); return; }
+    btnApp.addEventListener('click', () => toggle(document.documentElement));
+    btnDia.addEventListener('click', () => toggle($('#diagramPanel')));
+    document.querySelectorAll('[data-fullscreen]').forEach((b) => b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.more-pop').forEach((m) => { m.hidden = true; });
+      toggle($(b.dataset.fullscreen));
+    }));
+    const onChange = () => {
+      const el = fsEl();
+      btnApp.textContent = el === document.documentElement ? '⛶ Exit full screen' : '⛶ Full screen';
+      btnDia.classList.toggle('on', el === $('#diagramPanel'));
+      btnDia.title = el === $('#diagramPanel') ? 'Exit full screen (Esc)' : 'Show the simulator in full screen (Esc to exit)';
+      document.querySelectorAll('[data-fullscreen]').forEach((b) => { b.textContent = el === $(b.dataset.fullscreen) ? 'Exit full screen' : 'Full screen'; });
+      setTimeout(() => { drawDiagram(); drawGuides(); }, 80);
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    document.addEventListener('webkitfullscreenchange', onChange);
+  }
+
+  if (window.ResizeObserver) new ResizeObserver(() => drawGuides()).observe($('#photo'));
   buildUI();
-  setupSides();
   setupPointer();
   const saved = load();
-  if (saved) { S = saved.st; openLesson(saved.lesson, true); } else openLesson(0);
+  if (saved) S = saved.st;
+  clampAperture();
+  update();
+  const gotoChapter = setupCourse();
+  setupLayoutTools();
+  setupFullscreen();
+  setupPhotoLessons();
+  setupGallery();
+  setupSamples();
+  if (saved && saved.chapter) gotoChapter(saved.chapter);
   // index.html#play starts the light animation, #everywhere turns on "light goes everywhere"
   const hashOpts = location.hash.slice(1).split(',');
   if (hashOpts.includes('everywhere')) { S.everywhere = true; update(); }

@@ -16,161 +16,792 @@
       <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/>
       <path d="M20 2 L27 17 M38 20 L23 27 M20 38 L13 23 M2 20 L17 13 M7 7 L22 12 M33 33 L18 28" stroke="currentColor" stroke-width="2" fill="none"/>
     </svg>
-    <div>
-      <h1>Camera Lab</h1>
-      <p>Course 1: how a camera turns light into a photo</p>
-    </div>
+    <h1>Camera Lab</h1>
   </div>
-  <button class="ghost" id="resetAll">Reset</button>
+  <div class="toc-menu" id="tocMenu">
+    <button class="toc-btn" id="tocBtn" aria-expanded="false" aria-controls="toc">
+      <span class="toc-btn-label">Chapters</span><span class="toc-btn-cur" id="tocCur"></span><span class="caret">▾</span>
+      <span class="toc-btn-bar"><span id="tocBtnBar"></span></span>
+    </button>
+    <nav class="toc" id="toc" aria-label="Chapters" hidden></nav>
+  </div>
+  <div class="top-btns">
+    <button class="ghost" id="swapSides" title="Put the course on the other side of the lab">Course on left</button>
+    <button class="ghost" id="toggleCourse">Hide course</button>
+    <button class="ghost" id="fullscreenApp" title="Show Camera Lab in full screen (Esc to exit)">⛶ Full screen</button>
+    <button class="ghost" id="resetAll" title="Put every lab setting back to its default">Reset lab</button>
+  </div>
 </header>
 
-
-
 <main class="layout">
-  <aside class="side side-left" id="leftSide">
-    <button class="rail" data-collapse="left" title="Show camera settings" aria-label="Show camera settings">
-      <span class="rail-icon">»</span><span class="rail-text">Camera settings</span>
-    </button>
-    <div class="panel controls">
-    <div class="side-head"><h2>Camera settings</h2><button class="collapse-btn" data-collapse="left" title="Hide settings" aria-label="Hide settings">«</button></div>
 
-    <div class="ctl" data-ctl="aperture">
-      <div class="ctl-head"><label for="ap">Aperture</label><output id="apOut" class="val"></output></div>
-      <div class="iris-row">
-        <canvas id="iris" aria-hidden="true"></canvas>
-        <div class="grow">
-          <input type="range" id="ap" min="0" max="24" step="1">
-          <div class="ap-limit hidden" id="apLimit"><div class="ap-limit-bar" id="apLimitBar"></div><span id="apLimitText"></span></div>
-          <div class="ends"><span>wide open</span><span>closed down</span></div>
-        </div>
-      </div>
-      <p class="hint" id="apHint"></p>
+  <!-- ============================================================ COURSE -->
+  <section class="course" id="course" aria-label="Course">
+    <div class="course-inner">
+
+      <!-- 1 ============================================================ -->
+      <article class="chapter" id="ch-camera" data-title="Meet the camera" data-focus="">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 1</span>
+          <h2>Meet the camera</h2>
+          <p class="ch-lead">A camera is a dark box that catches light. Everything in photography comes down to four parts and what they do to that light. The lab next to this text is a working camera: read here, play there.</p>
+          <button class="setup" data-setup='{}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>The four parts</h3>
+          <div class="parts">
+            <div class="part"><b>Lens</b><p>Bends light so every point in the scene lands as a point on the sensor. Its focal length decides how much you see.</p></div>
+            <div class="part"><b>Aperture</b><p>An adjustable hole inside the lens. Wider lets in more light and blurs the background more.</p></div>
+            <div class="part"><b>Shutter</b><p>Two curtains in front of the sensor. Decides how long light falls on it, which freezes or smears motion.</p></div>
+            <div class="part"><b>Sensor + ISO</b><p>Millions of tiny light buckets that record the picture. ISO boosts their signal when light is low.</p></div>
+          </div>
+          <p>In the lab's diagram, light travels from the scene on the left into the camera on the right. Find the lens (two pieces of glass), the dark aperture blades between them, the grey shutter and the green sensor.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="closeup">Zoom into the camera</button><button class="try" data-action="viewreset">Show the whole diagram</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Light comes from everything, in every direction</h3>
+          <p>Sunlight or lamplight hits every object. A matte surface like skin, cloth or brick scatters that light out in all directions, like millions of tiny lamps. A shiny surface like a mirror sends most of it one way.</p>
+          <p>The camera only sees the thin cone of that light that happens to head into the lens. Everyone standing around sees the same person because each of them catches a different part of the same scattered light.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="everywhere">Light goes everywhere (on/off)</button><button class="try" data-action="play">Play light</button><button class="try" data-action="stop">Pause</button></div>
+          <p class="note-box">When "Play light" runs, dots that hit the aperture blades are discarded with a red ✕. The rest reach the sensor and make it glow.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Focus means the rays meet on the sensor</h3>
+          <p>Follow the orange rays from the person. They leave one point, spread out, get bent by the lens, and come back together. When they meet exactly on the sensor, that point is sharp. When they meet in front of or behind the sensor, they land as a small disc, and the point looks blurry.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="focus:subj">Focus on the person</button><button class="try" data-action="focus:wall">Focus on the wall</button><button class="try" data-action="focus:fg">Focus on the leaves</button></div>
+          <p>You can also click any subject in the diagram or in the photo. Watch the lens slide and the rays of the new subject meet on the sensor.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>The image lands upside down</h3>
+          <p>The ray through the center of the lens does not bend. A ray from the top of a subject goes down through the center and lands at the bottom of the sensor. So the whole picture is upside down (and flipped left to right). The camera simply turns it back.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="flip">See the photo as the sensor does</button></div>
+          <p>Drag the lights up in the diagram and watch their spot on the sensor move down.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Inside the lens</h3>
+          <p>A real lens is a stack of glass. The simulator shows two pieces: a <b>front glass</b> and a <b>rear glass</b>, both <b>convex</b> (thicker in the middle), so each bends light inward. The aperture sits between them, which lets it trim the light cone evenly for every point in the frame. Real lenses also include concave pieces that spread light a little to cancel color fringes and soft corners. Together they act like one convex lens.</p>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: why can you see a person from anywhere in a room?</summary><p>Because their skin and clothes scatter light in every direction. Your eye, like the lens, just catches the small cone of that light that comes toward it.</p></details>
+        <details class="quiz"><summary>Check yourself: what does "in focus" mean for the rays?</summary><p>All rays from one point of the subject come back together at one point exactly on the sensor.</p></details>
+      </article>
+
+      <!-- 2 ============================================================ -->
+      <article class="chapter" id="ch-focal" data-title="Focal length" data-focus="focal,lens,sensor">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 2</span>
+          <h2>Focal length: how much you see</h2>
+          <p class="ch-lead">Focal length decides how wide or how zoomed in your picture is. It is one of the first choices you make, and it also changes how the background looks.</p>
+          <button class="setup" data-setup='{"f":50,"N":4,"t":"1/60"}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <div id="focalMeaning" class="live-block"></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Field of view</h3>
+          <p>The field of view is the angle the camera sees. It is set by two things: the size of the sensor and the focal length. The dashed lines in the diagram start at the sensor edges and pass through the lens center. A longer focal length puts the lens further from the sensor, so those lines close in.</p>
+          <table class="data"><thead><tr><th>Focal length (full frame)</th><th>Sees across</th><th>Typical use</th></tr></thead><tbody>
+            <tr><td>14 mm</td><td>104°</td><td>Ultra wide: rooms, big landscapes</td></tr>
+            <tr><td>24 mm</td><td>74°</td><td>Wide: landscapes, street, travel</td></tr>
+            <tr><td>35 mm</td><td>54°</td><td>Street and documentary, "what you notice"</td></tr>
+            <tr><td>50 mm</td><td>40°</td><td>Normal: close to how your eyes feel</td></tr>
+            <tr><td>85 mm</td><td>24°</td><td>Portraits: flattering faces, soft background</td></tr>
+            <tr><td>135 mm</td><td>15°</td><td>Tight portraits, details</td></tr>
+            <tr><td>200 mm</td><td>10°</td><td>Sports, wildlife, far subjects</td></tr>
+          </tbody></table>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"f":24}'>24 mm</button><button class="try" data-try='{"f":50}'>50 mm</button><button class="try" data-try='{"f":135}'>135 mm</button><button class="try" data-try='{"f":200}'>200 mm</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Examples: same place, different focal lengths</h3>
+          <p>The camera does not move. Only the focal length changes. Notice how the person grows, the leaves in front leave the frame, and the wall fills the background.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":24,"N":4,"t":"1/60"}'><canvas></canvas><figcaption><b>24 mm</b> Wide. The whole scene, person small.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":35,"N":4,"t":"1/60"}'><canvas></canvas><figcaption><b>35 mm</b> Still wide, a natural street view.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":4,"t":"1/60"}'><canvas></canvas><figcaption><b>50 mm</b> Normal. Close to what your eyes notice.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":4,"t":"1/60"}'><canvas></canvas><figcaption><b>85 mm</b> Portrait length. The person fills the frame.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":135,"N":4,"t":"1/60"}'><canvas></canvas><figcaption><b>135 mm</b> Tight. Only the upper body.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":200,"N":4,"t":"1/60"}'><canvas></canvas><figcaption><b>200 mm</b> A detail of the scene.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Zoom with your feet: perspective</h3>
+          <p>Here the person stays the same size because the photographer walks back as the focal length grows. The wall is always 5 m behind the person. Look how the background changes: with a wide lens close up, the wall looks far away and small. With a long lens from far away, the wall looks big and close behind the person. This is called <b>compression</b>. It comes from where you stand, and the focal length just crops to it.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":24,"N":4,"t":"1/60","subjD":1.9,"focus":1.9,"wallD":6.9}'><canvas></canvas><figcaption><b>24 mm from 1.9 m</b> Wall looks distant, lots of surroundings.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":4,"t":"1/60","subjD":4,"focus":4,"wallD":9}'><canvas></canvas><figcaption><b>50 mm from 4 m</b> A natural balance.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":135,"N":4,"t":"1/60","subjD":10.8,"focus":10.8,"wallD":15.8}'><canvas></canvas><figcaption><b>135 mm from 10.8 m</b> Wall looms big behind the person.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Sensor size and crop factor</h3>
+          <p>The lens throws a round image into the camera. The sensor only records the part that lands on it. A smaller sensor has its edges closer to the center, so the same lens sees a narrower view. The <b>crop factor</b> tells you how much: multiply the focal length by it to get the "35 mm equivalent", the focal length that would frame the same on full frame.</p>
+          <table class="data"><thead><tr><th>Sensor</th><th>Size</th><th>Crop factor</th><th>50 mm frames like</th></tr></thead><tbody>
+            <tr><td>Full frame</td><td>36 × 24 mm</td><td>×1.0</td><td>50 mm</td></tr>
+            <tr><td>APS-C</td><td>23.5 × 15.6 mm</td><td>×1.5</td><td>77 mm</td></tr>
+            <tr><td>Micro 4/3</td><td>17.3 × 13 mm</td><td>×2.0</td><td>100 mm</td></tr>
+            <tr><td>Phone (1/1.3")</td><td>9.8 × 7.4 mm</td><td>×3.5</td><td>176 mm</td></tr>
+          </tbody></table>
+          <div class="samples cols-4">
+            <figure class="sample" data-sample='{"f":50,"N":4,"t":"1/60","sensor":"ff"}'><canvas></canvas><figcaption><b>Full frame</b></figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":4,"t":"1/60","sensor":"apsc"}'><canvas></canvas><figcaption><b>APS-C</b></figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":4,"t":"1/60","sensor":"m43"}'><canvas></canvas><figcaption><b>Micro 4/3</b></figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":4,"t":"1/60","sensor":"phone"}'><canvas></canvas><figcaption><b>Phone size</b></figcaption></figure>
+          </div>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"sensor":"ff"}'>Full frame</button><button class="try" data-try='{"sensor":"apsc"}'>APS-C</button><button class="try" data-try='{"sensor":"phone"}'>Phone</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Prime lens vs zoom lens</h3>
+          <p>A <b>prime</b> has one focal length. A <b>zoom</b> moves glass groups inside to change its focal length. Switch the lab's lens and zoom into it to watch the groups slide.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"lens":"zoom"}'>Use the zoom lens</button><button class="try" data-action="closeup">Zoom into the lens</button><button class="try" data-try='{"lens":"zoom","f":200}'>Zoom to 200 mm</button><button class="try" data-try='{"lens":"prime"}'>Back to a prime</button></div>
+          <div id="zoomExplain" class="zoom-explain live-block"></div>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: is focal length the length of the lens?</summary><p>No. It is the distance from the lens's optical center to F, the point where light from very far away comes together. It describes how strongly the glass bends light.</p></details>
+        <details class="quiz"><summary>Check yourself: does a 50 mm lens on APS-C become a 75 mm lens?</summary><p>No, it is still a 50 mm lens. The smaller sensor just crops the view, so it frames like about 75 mm would on full frame.</p></details>
+        <details class="quiz"><summary>Check yourself: what really causes "compression"?</summary><p>Standing further away. The long lens only lets you fill the frame from that distance.</p></details>
+      </article>
+
+      <!-- 3 ============================================================ -->
+      <article class="chapter" id="ch-aperture" data-title="Aperture" data-focus="aperture">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 3</span>
+          <h2>Aperture: light and blur</h2>
+          <p class="ch-lead">The aperture is the hole inside the lens. It changes two things at once: how much light gets in, and how much of the scene in front of and behind your subject is blurred.</p>
+          <button class="setup" data-setup='{"f":85,"N":2.8,"t":"1/125"}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>What the f-number means</h3>
+          <p>The f-number is <b>focal length ÷ opening width</b>. So f/2 on a 50 mm lens is a 25 mm hole, and f/8 is a 6.25 mm hole. A bigger number means a smaller hole. Because it is a ratio, f/4 lets in the same amount of light on any lens.</p>
+          <p>The amount of light depends on the <b>area</b> of the hole. Each "full stop" below halves the area, so it halves the light:</p>
+          <table class="data"><thead><tr><th>f-number</th><th>Opening on 50 mm</th><th>Light compared to f/1.4</th></tr></thead><tbody>
+            <tr><td>f/1.4</td><td>35.7 mm</td><td>all of it</td></tr>
+            <tr><td>f/2</td><td>25.0 mm</td><td>1/2</td></tr>
+            <tr><td>f/2.8</td><td>17.9 mm</td><td>1/4</td></tr>
+            <tr><td>f/4</td><td>12.5 mm</td><td>1/8</td></tr>
+            <tr><td>f/5.6</td><td>8.9 mm</td><td>1/16</td></tr>
+            <tr><td>f/8</td><td>6.3 mm</td><td>1/32</td></tr>
+            <tr><td>f/11</td><td>4.5 mm</td><td>1/64</td></tr>
+            <tr><td>f/16</td><td>3.1 mm</td><td>1/128</td></tr>
+          </tbody></table>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"N":1.8}'>f/1.8</button><button class="try" data-try='{"N":4}'>f/4</button><button class="try" data-try='{"N":8}'>f/8</button><button class="try" data-try='{"N":16}'>f/16</button><button class="try" data-action="play">Play light</button></div>
+          <p>You can also drag the aperture blades up and down in the diagram.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Examples: f/1.8 to f/22, same brightness</h3>
+          <p>Each photo is at 85 mm, focused on the person. The shutter speed was changed each time to keep the brightness the same. Watch the wall go from soft to sharp. Also notice the car: at f/11 and f/22 the shutter had to be so slow that it smears.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":85,"N":1.8,"t":"1/320"}'><canvas></canvas><figcaption><b>f/1.8</b> Very soft wall, lights become big discs.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":2.8,"t":"1/125"}'><canvas></canvas><figcaption><b>f/2.8</b> Soft background, person stands out.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":5.6,"t":"1/30"}'><canvas></canvas><figcaption><b>f/5.6</b> Bricks start to show.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":11,"t":"1/8"}'><canvas></canvas><figcaption><b>f/11</b> Wall almost sharp. Car smears (slow shutter).</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":22,"t":"0.5"}'><canvas></canvas><figcaption><b>f/22</b> Everything sharp, but diffraction softens fine detail.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <div id="apExplain" class="ap-explain live-block"></div>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: does closing the aperture crop the picture?</summary><p>No. The framing is set by the sensor edges and the lens center. Closing the aperture only removes outer rays, which makes the photo darker and the background sharper.</p></details>
+        <details class="quiz"><summary>Check yourself: f/2.8 to f/5.6 is how many stops?</summary><p>Two stops (f/2.8 → f/4 → f/5.6), so a quarter of the light.</p></details>
+      </article>
+
+      <!-- 4 ============================================================ -->
+      <article class="chapter" id="ch-focus" data-title="Focus and depth of field" data-focus="focus,aperture">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 4</span>
+          <h2>Focus and depth of field</h2>
+          <p class="ch-lead">Focusing moves the lens a few millimetres so that one chosen distance lands sharp on the sensor. How deep the sharp zone is around that distance is the depth of field.</p>
+          <button class="setup" data-setup='{"f":50,"N":1.8,"t":"1/320","rays":{"fg":true,"subj":true,"wall":true,"bg":false}}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>Examples: where you focus</h3>
+          <p>Same camera, same f/1.8, only the focus distance changes. Your eye always goes to what is sharp.</p>
+          <div class="samples cols-4">
+            <figure class="sample" data-sample='{"N":1.8,"t":"1/320","focus":1}'><canvas></canvas><figcaption><b>Leaves (1 m)</b></figcaption></figure>
+            <figure class="sample" data-sample='{"N":1.8,"t":"1/320","focus":4}'><canvas></canvas><figcaption><b>Person (4 m)</b></figcaption></figure>
+            <figure class="sample" data-sample='{"N":1.8,"t":"1/320","focus":8}'><canvas></canvas><figcaption><b>Wall (8 m)</b></figcaption></figure>
+            <figure class="sample" data-sample='{"N":1.8,"t":"1/320","focus":"inf"}'><canvas></canvas><figcaption><b>Infinity</b></figcaption></figure>
+          </div>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="focus:fg">Leaves</button><button class="try" data-action="focus:subj">Person</button><button class="try" data-action="focus:wall">Wall</button><button class="try" data-action="focus:mtn">Mountains</button></div>
+          <p>Or drag the green focus line in the diagram and watch the lens slide.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>What happens inside the lens when you focus</h3>
+          <div id="focusExplain" class="focus-explain live-block"></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Depth of field: how deep the sharp zone is</h3>
+          <p>Only one distance is truly sharp, but things a little in front and behind still look sharp. That zone is the depth of field, the green band in the diagram. It gets <b>shallower</b> with:</p>
+          <ul class="bul">
+            <li>a <b>wider aperture</b> (f/1.8 is shallower than f/8),</li>
+            <li>a <b>closer subject</b> (focusing at 1 m is much shallower than at 10 m),</li>
+            <li>a <b>longer focal length</b> at the same distance.</li>
+          </ul>
+          <div class="samples cols-4">
+            <figure class="sample" data-sample='{"f":85,"N":1.8,"t":"1/320"}'><canvas></canvas><figcaption><b>85 mm f/1.8</b> Thin: only the person.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":8,"t":"1/15"}'><canvas></canvas><figcaption><b>85 mm f/8</b> Deeper: wall almost sharp.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/125","subjD":2,"focus":2}'><canvas></canvas><figcaption><b>Person at 2 m</b> Shallow.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/125","subjD":8,"focus":8,"wallD":14}'><canvas></canvas><figcaption><b>Person at 8 m</b> Much deeper.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Too close to focus</h3>
+          <p>The closer something is, the further behind the lens its light comes together. The lens can only move out so far. Past that point, the <b>minimum focus distance</b> (about 45 cm for a 50 mm lens), it cannot focus at all. A macro lens or extension tubes give more extension, so they focus much closer.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"subjD":0.3,"rays":{"subj":true}}'>Put the person 30 cm away</button><button class="try" data-action="focus:subj">Try to focus on them</button><button class="try" data-try='{"macro":true}'>Use a macro lens</button><button class="try" data-try='{"macro":false,"subjD":4}'>Reset</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>How the camera finds focus</h3>
+          <p>Most cameras do not measure the distance to the subject. They look at the light on the sensor and move the lens until it is sharp:</p>
+          <ul class="bul">
+            <li><b>Contrast detection:</b> move the lens a little, measure sharpness, repeat until it peaks. Accurate but it hunts back and forth (like the hunting you see when something is too close).</li>
+            <li><b>Phase detection:</b> special pixels compare light from the left and right sides of the lens. Out of focus, the two views are shifted. The direction and size of the shift tell the camera exactly which way and how far to move. Fast, no hunting.</li>
+            <li><b>Distance sensors:</b> some phones fire a laser or LiDAR pulse and time the echo, which helps in the dark.</li>
+          </ul>
+          <p>The lens has a position sensor in its focus motor, so it knows its own extension. Using the lens formula, the camera turns that into the "focus distance" saved with your photo.</p>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: does focusing change the focal length?</summary><p>No. Focusing adds extension (moves the lens further from the sensor). Lens to sensor = focal length + extension.</p></details>
+        <details class="quiz"><summary>Check yourself: why does a lens barely move to focus from 3 m to infinity?</summary><p>Extension = f² / (d − f). It stays tiny for far distances and grows quickly only up close.</p></details>
+      </article>
+
+      <!-- 5 ============================================================ -->
+      <article class="chapter" id="ch-bokeh" data-title="Background blur and bokeh" data-focus="aperture,focal">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 5</span>
+          <h2>Background blur and bokeh</h2>
+          <p class="ch-lead">That soft, creamy background in portraits is not a filter. It is every point of the background landing on the sensor as a small disc. Here is exactly how to make it stronger or weaker.</p>
+          <button class="setup" data-setup='{"f":85,"N":1.8,"t":"1/320","rays":{"wall":true,"subj":true,"bg":false}}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <div id="bokehExplain" class="bokeh-explain live-block"></div>
+          <p>Drag the wall in the diagram nearer or further and read the numbers above change.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Four ways to get more background blur</h3>
+          <p>The first photo is the starting point. Each of the others changes just one thing.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":50,"N":5.6,"t":"1/30","wallD":6}'><canvas></canvas><figcaption><b>Start</b> 50 mm, f/5.6, wall 2 m behind.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":1.8,"t":"1/320","wallD":6}'><canvas></canvas><figcaption><b>1. Wider aperture</b> f/1.8 instead of f/5.6.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":135,"N":5.6,"t":"1/30","subjD":10.8,"focus":10.8,"wallD":12.8}'><canvas></canvas><figcaption><b>2. Longer lens</b> 135 mm, stepped back to keep the framing.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":5.6,"t":"1/30","wallD":25}'><canvas></canvas><figcaption><b>3. Background further away</b> wall 21 m behind.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":5.6,"t":"1/30","subjD":2,"focus":2,"wallD":4}'><canvas></canvas><figcaption><b>4. Get closer</b> person at 2 m (wall still 2 m behind).</figcaption></figure>
+            <figure class="sample" data-sample='{"f":135,"N":1.8,"t":"1/320","subjD":10.8,"focus":10.8,"wallD":30}'><canvas></canvas><figcaption><b>All together</b> The classic portrait look.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>The shape of bokeh</h3>
+          <p>Small lights show the single discs clearly. Each disc takes the shape of the aperture opening: round when wide open, a polygon of the blades when closed down. That is why some lenses are praised for "round bokeh": they have more, curved blades.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":135,"N":2,"t":"1/250","subjD":6,"focus":6,"wallD":14}'><canvas></canvas><figcaption><b>f/2</b> Big round discs.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":135,"N":5.6,"t":"1/30","subjD":6,"focus":6,"wallD":14}'><canvas></canvas><figcaption><b>f/5.6</b> Smaller, 7-sided.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":135,"N":11,"t":"1/8","subjD":6,"focus":6,"wallD":14}'><canvas></canvas><figcaption><b>f/11</b> Tiny, almost points.</figcaption></figure>
+          </div>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: why does moving the wall from 20 m to 50 m barely add blur?</summary><p>The blur disc grows toward a limit set by the aperture and focal length. Past a certain distance the background is already "almost infinity" for the lens.</p></details>
+      </article>
+
+      <!-- 6 ============================================================ -->
+      <article class="chapter" id="ch-shutter" data-title="Shutter speed" data-focus="shutter,handheld">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 6</span>
+          <h2>Shutter speed: time and motion</h2>
+          <p class="ch-lead">The shutter decides how long the sensor sees light. Short times freeze motion. Long times record movement as a smear, and also record your shaking hands.</p>
+          <button class="setup" data-setup='{"f":35,"N":4,"t":"1/60","rays":{"car":true}}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>How the shutter works</h3>
+          <p>Most cameras use two curtains just in front of the sensor. The first curtain drops to uncover the sensor, then the second follows to cover it again. The time between them is the shutter speed. At very fast speeds the second curtain starts before the first has finished, so only a narrow slit sweeps across the sensor.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="shoot">Take a photo (slow motion)</button><button class="try" data-try='{"t":"1/1000","iso":800,"N":2.8}'>1/1000 s</button><button class="try" data-try='{"t":"1/15","N":8}'>1/15 s</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Examples: freezing the car</h3>
+          <p>The car drives at 36 km/h. Each photo keeps the same brightness by trading aperture and ISO.</p>
+          <div class="samples cols-4">
+            <figure class="sample" data-sample='{"f":35,"N":2.8,"t":"1/1000","iso":800}'><canvas></canvas><figcaption><b>1/1000 s</b> Frozen.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":35,"N":2.8,"t":"1/125"}'><canvas></canvas><figcaption><b>1/125 s</b> A slight smear.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":35,"N":5.6,"t":"1/30"}'><canvas></canvas><figcaption><b>1/30 s</b> Clearly moving.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":35,"N":11,"t":"1/8"}'><canvas></canvas><figcaption><b>1/8 s</b> A streak.</figcaption></figure>
+          </div>
+          <table class="data"><thead><tr><th>Shutter speed</th><th>Good for</th></tr></thead><tbody>
+            <tr><td>1/2000 s and faster</td><td>Birds, sports, splashing water</td></tr>
+            <tr><td>1/500 s</td><td>Running people, kids, pets</td></tr>
+            <tr><td>1/125 to 1/250 s</td><td>Walking people, everyday photos</td></tr>
+            <tr><td>1/60 s</td><td>Still people, handheld with a normal lens</td></tr>
+            <tr><td>1/15 s and slower</td><td>Tripod: silky water, light trails, night scenes</td></tr>
+          </tbody></table>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Camera shake and the handheld rule</h3>
+          <p>Your hands always move a little. A rule of thumb: handheld, use at least <b>1 / (focal length × crop factor)</b> seconds. With a 50 mm lens on full frame, 1/50 s or faster. Longer lenses magnify shake, so they need faster speeds. Image stabilisation can buy you a few stops.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/125","handheld":true}'><canvas></canvas><figcaption><b>Handheld 1/125 s</b> Sharp.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":5.6,"t":"1/30","handheld":true}'><canvas></canvas><figcaption><b>Handheld 1/30 s</b> Slightly soft.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":11,"t":"1/8","handheld":true}'><canvas></canvas><figcaption><b>Handheld 1/8 s</b> Everything shakes.</figcaption></figure>
+          </div>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"handheld":true,"t":"1/8","N":11}'>Handheld at 1/8 s</button><button class="try" data-try='{"handheld":false}'>Use a tripod</button></div>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: handheld with a 200 mm lens on APS-C, what is a safe speed?</summary><p>200 × 1.5 = 300, so about 1/300 s or faster (1/320 s).</p></details>
+      </article>
+
+      <!-- 7 ============================================================ -->
+      <article class="chapter" id="ch-iso" data-title="ISO and noise" data-focus="iso,scene,sensor">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 7</span>
+          <h2>ISO: brightness with a cost</h2>
+          <p class="ch-lead">ISO does not let in more light. It amplifies the signal the sensor already caught. When there is little light, that boost also amplifies the random speckle in the signal, which you see as grain.</p>
+          <button class="setup" data-setup='{"scene":"night","N":2.8,"t":"1/60","iso":400}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>Why noise happens</h3>
+          <p>Light arrives as individual particles called photons, and they arrive randomly, like raindrops. With lots of light the randomness averages out. With very little light, neighbouring pixels catch noticeably different counts, and boosting the signal makes that difference visible. A bigger sensor catches more light in total, so at the same ISO it looks cleaner.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="fix:iso">Fix the brightness with ISO</button><button class="try" data-try='{"sensor":"phone"}'>Phone sensor</button><button class="try" data-try='{"sensor":"ff"}'>Full frame</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Examples: a night scene</h3>
+          <div class="samples cols-4">
+            <figure class="sample" data-sample='{"scene":"night","N":2.8,"t":"1/60","iso":400}'><canvas></canvas><figcaption><b>ISO 400</b> Clean but three stops too dark.</figcaption></figure>
+            <figure class="sample" data-sample='{"scene":"night","N":2.8,"t":"1/60","iso":3200}'><canvas></canvas><figcaption><b>ISO 3200</b> Right brightness, some grain.</figcaption></figure>
+            <figure class="sample" data-sample='{"scene":"night","N":2.8,"t":"1/60","iso":3200,"sensor":"phone"}'><canvas></canvas><figcaption><b>ISO 3200, phone sensor</b> Much grainier.</figcaption></figure>
+            <figure class="sample" data-sample='{"scene":"night","N":2.8,"t":"1/500","iso":25600}'><canvas></canvas><figcaption><b>ISO 25600 at 1/500 s</b> Frozen car, heavy grain.</figcaption></figure>
+          </div>
+          <p class="note-box">Rule: use the lowest ISO that still lets you get the aperture and shutter speed you need. Raise ISO last.</p>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: ISO 100 to ISO 400 is how many stops brighter?</summary><p>Two stops: 100 → 200 → 400.</p></details>
+      </article>
+
+      <!-- 8 ============================================================ -->
+      <article class="chapter" id="ch-exposure" data-title="Exposure triangle" data-focus="aperture,shutter,iso,scene">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 8</span>
+          <h2>The exposure triangle</h2>
+          <p class="ch-lead">Aperture, shutter speed and ISO all change brightness. A "stop" doubles or halves it. You can reach the same brightness many ways, and each way gives a different look.</p>
+          <button class="setup" data-setup='{}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>One stop on each control</h3>
+          <table class="data"><thead><tr><th>Control</th><th>One stop brighter</th><th>Side effect</th></tr></thead><tbody>
+            <tr><td>Aperture</td><td>f/4 → f/2.8</td><td>Shallower depth of field</td></tr>
+            <tr><td>Shutter</td><td>1/250 → 1/125 s</td><td>More motion blur and shake</td></tr>
+            <tr><td>ISO</td><td>200 → 400</td><td>More grain</td></tr>
+          </tbody></table>
+          <p>The meter under the photo shows how far you are from a good exposure, in stops (EV). The "Fix brightness" buttons solve it with the control you choose.</p>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"N":5.6}'>Close down two stops</button><button class="try" data-action="fix:shutter">Fix with shutter</button><button class="try" data-action="fix:iso">Fix with ISO</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Examples: same brightness, three looks</h3>
+          <div class="samples">
+            <figure class="sample" data-sample='{"N":1.8,"t":"1/320","iso":100}'><canvas></canvas><figcaption><b>Portrait</b> f/1.8, fast shutter: soft background, frozen.</figcaption></figure>
+            <figure class="sample" data-sample='{"N":8,"t":"1/15","iso":100}'><canvas></canvas><figcaption><b>Deep and slow</b> f/8: everything sharp, car smears.</figcaption></figure>
+            <figure class="sample" data-sample='{"N":8,"t":"1/250","iso":1600}'><canvas></canvas><figcaption><b>Deep and frozen</b> paid for with ISO 1600 grain.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Examples: under and over exposed</h3>
+          <div class="samples">
+            <figure class="sample" data-sample='{"N":2.8,"t":"1/500"}'><canvas></canvas><figcaption><b>-2 EV</b> Too dark, shadows lost.</figcaption></figure>
+            <figure class="sample" data-sample='{"N":2.8,"t":"1/125"}'><canvas></canvas><figcaption><b>0 EV</b> Right.</figcaption></figure>
+            <figure class="sample" data-sample='{"N":2.8,"t":"1/30"}'><canvas></canvas><figcaption><b>+2 EV</b> Too bright, sky and skin blown out.</figcaption></figure>
+          </div>
+          <table class="data"><thead><tr><th>Light</th><th>Scene EV</th><th>Example settings at ISO 100</th></tr></thead><tbody>
+            <tr><td>Bright sun</td><td>15</td><td>f/16, 1/125 s ("sunny 16")</td></tr>
+            <tr><td>Cloudy</td><td>12</td><td>f/5.6, 1/125 s</td></tr>
+            <tr><td>Golden hour</td><td>10</td><td>f/2.8, 1/125 s</td></tr>
+            <tr><td>Indoors</td><td>7</td><td>f/2, 1/30 s (or raise ISO)</td></tr>
+            <tr><td>Night street</td><td>4</td><td>f/2.8, 1/60 s at ISO 3200</td></tr>
+          </tbody></table>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"scene":"sun"}'>Bright sun</button><button class="try" data-try='{"scene":"indoor"}'>Indoors</button><button class="try" data-try='{"scene":"night"}'>Night</button><button class="try" data-action="fix:iso">Fix with ISO</button></div>
+        </section>
+
+        <details class="quiz"><summary>Check yourself: you close from f/2.8 to f/5.6. What shutter keeps the same brightness if you were at 1/250 s?</summary><p>Two stops less light, so two stops slower: 1/250 → 1/125 → 1/60 s.</p></details>
+      </article>
+
+      <!-- 9 ============================================================ -->
+      <article class="chapter" id="ch-composition" data-title="Composition" data-focus="">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 9</span>
+          <h2>Composition: guiding the eye</h2>
+          <p class="ch-lead">Settings make a photo correct. Composition makes it interesting. The tools here are simple: layers of depth, lines that lead, where you place the subject, and what you keep out of the frame.</p>
+          <button class="setup" data-setup='{"f":50,"N":2.8,"t":"1/250","iso":200,"subjD":3.5,"focus":3.5,"wallD":10,"guides":true,"rays":{"fg":true,"subj":true,"wall":true,"car":false,"tree":false,"bg":false,"mtn":false}}'>Set up the lab for this chapter</button>
+        </header>
+
+        <section class="ch-sec">
+          <h3>Layering: foreground, subject, background</h3>
+          <p>A photo feels deep when it has three layers: something close in the <b>foreground</b>, the <b>subject</b> in the middle, and a <b>background</b> behind. The eye enters at the soft foreground, lands on the sharp subject, then drifts to the background. That path is called the <b>visual flow</b>.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/250","iso":200,"subjD":3.5,"focus":3.5,"wallD":10}'><canvas></canvas><figcaption><b>Layered</b> Soft leaves, sharp person, soft wall.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/250","iso":200,"subjD":3.5,"focus":3.5,"wallD":10,"hideFg":true}'><canvas></canvas><figcaption><b>No foreground</b> Flatter, less depth.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":11,"t":"1/15","iso":200,"subjD":3.5,"focus":3.5,"wallD":10}'><canvas></canvas><figcaption><b>Everything sharp</b> The layers merge together.</figcaption></figure>
+          </div>
+          <div class="try-row"><span>Try it</span><button class="try" data-action="guides">Composition guides (on/off)</button><button class="try" data-try='{"hideFg":true}'>Remove the foreground</button><button class="try" data-try='{"hideFg":false}'>Bring it back</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Leading lines</h3>
+          <p>The eye follows lines. In our scene the stone path runs straight toward the person and pulls the viewer in. Roads, railings, fences, rivers and shadows all work the same way. Try to make them point at your subject, not out of the frame.</p>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Rule of thirds</h3>
+          <p>Imagine the frame split into three by three. Placing the subject or their eyes on one of the lines or crossings usually feels more natural than dead center, and leaves room for the background to tell a story. Centered works too, for symmetry and strong, direct portraits. In the lab, drag the person left or right in the photo.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/250","iso":200,"subjD":3.5,"focus":3.5,"wallD":10,"guides":true,"subjX":0}'><canvas></canvas><figcaption><b>Centered</b> Direct and calm.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/250","iso":200,"subjD":3.5,"focus":3.5,"wallD":10,"guides":true,"subjX":0.41}'><canvas></canvas><figcaption><b>On the right third</b> Space for the scene.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/250","iso":200,"subjD":3.5,"focus":3.5,"wallD":10,"guides":true,"subjX":-0.41}'><canvas></canvas><figcaption><b>On the left third</b> The leaves balance the right.</figcaption></figure>
+          </div>
+          <div class="try-row"><span>Try it</span><button class="try" data-try='{"subjX":0.41,"guides":true}'>Person on the right third</button><button class="try" data-try='{"subjX":0}'>Center</button></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Background and separation</h3>
+          <p>A busy background competes with your subject. Three ways to clean it up: blur it (wide aperture, longer lens, more distance), move so something plain is behind the subject, or change your angle. Watch for lines or objects that seem to grow out of the subject's head.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":50,"N":2.8,"t":"1/125","subjD":4,"focus":4,"wallD":4.8}'><canvas></canvas><figcaption><b>Wall right behind</b> Bricks compete with the person.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":1.8,"t":"1/320","subjD":6.4,"focus":6.4,"wallD":20}'><canvas></canvas><figcaption><b>Far, soft wall</b> The person pops out.</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>More composition tools</h3>
+          <ul class="bul">
+            <li><b>Frame within a frame:</b> doorways, windows, branches around the subject focus attention.</li>
+            <li><b>Negative space:</b> empty area around a small subject can feel calm or lonely.</li>
+            <li><b>Camera height:</b> eye level feels natural, lower makes a subject powerful, higher makes it small.</li>
+            <li><b>Light direction:</b> side light shows texture and shape, back light gives a glowing outline, golden hour is soft and warm.</li>
+            <li><b>Edges:</b> before you shoot, run your eye around the frame edges and remove anything distracting.</li>
+          </ul>
+        </section>
+      </article>
+
+      <!-- 10 ============================================================ -->
+      <article class="chapter" id="ch-realphotos" data-title="Composition in real photos" data-focus="">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 10</span>
+          <h2>Composition in real photos</h2>
+          <p class="ch-lead">Real photographs by working photographers, with the composition drawn on top. Then you decide which crop works best, and practise cropping yourself. Press "Hide guides" on any photo to see it clean.</p>
+        </header>
+
+        <section class="ch-sec">
+          <h3>Rule of thirds</h3>
+          <p>The two lines across and two lines down split the frame into nine parts. Strong photos often place the subject on a line or a crossing, and the horizon on the top or bottom line instead of the middle. That leaves two thirds of the frame for the part that matters most.</p>
+          <div class="photo-grid">
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/505.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="g" x1="33.33" y1="0" x2="33.33" y2="100"/><line class="g" x1="66.67" y1="0" x2="66.67" y2="100"/><line class="g" x1="0" y1="33.33" x2="100" y2="33.33"/><line class="g" x1="0" y1="66.67" x2="100" y2="66.67"/><line class="hl" x1="0" y1="66.5" x2="100" y2="66.5"/><ellipse class="mk" cx="60.5" cy="57" rx="3" ry="6"/></svg><span class="tag" style="left:64%;top:44%">Subject near the right third</span><span class="tag" style="left:3%;top:70%">Horizon on the lower third</span></div>
+              <figcaption><b>Silhouette at sunset.</b> The person sits close to the right third line and the horizon rests on the lower third, so the glowing sky gets most of the frame.<span class="credit">Photo: lee Scott (Unsplash)</span></figcaption>
+            </figure>
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/853.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="g" x1="33.33" y1="0" x2="33.33" y2="100"/><line class="g" x1="66.67" y1="0" x2="66.67" y2="100"/><line class="g" x1="0" y1="33.33" x2="100" y2="33.33"/><line class="g" x1="0" y1="66.67" x2="100" y2="66.67"/><line class="hl" x1="0" y1="37" x2="100" y2="37"/><ellipse class="mk" cx="72" cy="73" rx="14" ry="10"/></svg><span class="tag" style="left:52%;top:57%">Rock on the lower right crossing</span><span class="tag" style="left:3%;top:28%">Horizon near the upper third</span></div>
+              <figcaption><b>Sea rock.</b> The rock sits right on a thirds crossing. The empty sea to its left gives it room and calm.<span class="credit">Photo: Stephen Radford (Unsplash)</span></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Leading lines</h3>
+          <p>Lines in the scene pull the eye along them. When they all run toward one point, the eye lands exactly there. Look for paths, roads, rails, fences, piers and rivers, and make them point into the frame.</p>
+          <div class="photo-grid">
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/521.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="ll" x1="0" y1="48" x2="50" y2="35"/><line class="ll" x1="100" y1="53" x2="50" y2="35"/><line class="ll" x1="14" y1="100" x2="50" y2="35"/><line class="ll" x1="88" y1="100" x2="50" y2="35"/><ellipse class="mk" cx="50" cy="35" rx="2.5" ry="3.8"/></svg><span class="tag" style="left:53%;top:27%">Every line meets here</span></div>
+              <figcaption><b>Pier.</b> Railings and boards all converge on one point near the horizon. The eye travels straight down the pier and out to sea.<span class="credit">Photo: Christian Holzinger (Unsplash)</span></figcaption>
+            </figure>
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/563.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="ll" x1="0" y1="80" x2="49" y2="49"/><line class="ll" x1="100" y1="83" x2="50" y2="49"/><line class="ll" x1="46" y1="100" x2="49" y2="49"/><ellipse class="mk" cx="49.5" cy="49" rx="2.5" ry="3.8"/></svg><span class="tag" style="left:52%;top:40%">The road leads to the mountains</span></div>
+              <figcaption><b>Road into the mountains.</b> The edges and the dashed center line carry you from the bottom of the frame to the peaks.<span class="credit">Photo: Bec Brown (Unsplash)</span></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Symmetry and framing</h3>
+          <p><b>Symmetry</b> gives a calm, formal feeling. Here the rule of thirds is broken on purpose: the subject goes dead center. <b>Framing</b> uses something in the scene, like a window, an arch or two walls, to draw a border around the subject. It focuses attention and adds depth.</p>
+          <div class="photo-grid">
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/255.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="ll" x1="50.5" y1="0" x2="50.5" y2="100"/></svg><span class="tag" style="left:52%;top:6%">Mirror line</span></div>
+              <figcaption><b>Path to the trees.</b> Path and trees are centered, so both halves mirror each other. Centered composition works when the scene itself is symmetrical.<span class="credit">Photo: Jon Ottosson (Unsplash)</span></figcaption>
+            </figure>
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/208.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect class="fr" x="21.5" y="17" width="57.5" height="63"/></svg><span class="tag" style="left:22%;top:10%">The window is the frame</span></div>
+              <figcaption><b>Window.</b> The dark wall frames the bright view. The eye cannot escape the rectangle, so it studies the trees inside.<span class="credit">Photo: Martin Wessely (Unsplash)</span></figcaption>
+            </figure>
+            <figure class="photo-ex">
+              <div class="ph" style="aspect-ratio:2/3"><img src="images/composition/1065.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect class="fr" x="59" y="49" width="27" height="12"/><line class="ll" x1="0" y1="72" x2="59" y2="61"/><line class="ll" x1="100" y1="68" x2="86" y2="61"/></svg><span class="tag" style="left:40%;top:42%">Walls frame the sea</span></div>
+              <figcaption><b>Alley to the sea.</b> Two walls squeeze the view down to a small slice of blue, and the paving leads you toward it. A vertical photo suits the tall, narrow scene.<span class="credit">Photo: Bertrand Zuchuat (Unsplash)</span></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Layering: foreground, middle, background</h3>
+          <p>Three planes of depth turn a flat picture into a place you could walk into: something near the lens, something in the middle, something far away. This is the same idea as the leaves, person and wall in the lab, in a real landscape.</p>
+          <div class="photo-grid one">
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/434.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="hl" x1="0" y1="50" x2="100" y2="50"/><line class="hl" x1="0" y1="64" x2="100" y2="64"/></svg><span class="tag" style="left:3%;top:20%">3 Background: forest and mountains</span><span class="tag" style="left:3%;top:54%">2 Middle: the lake</span><span class="tag" style="left:3%;top:80%">1 Foreground: the jetty</span></div>
+              <figcaption><b>Jetty and lake.</b> The jetty pulls you in from the bottom edge (also a leading line), the lake carries you across, and the mountains close the scene.<span class="credit">Photo: Ales Krivec (Unsplash)</span></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Negative space</h3>
+          <p>Empty space around a small subject makes it stand out and gives a quiet, minimal mood. The empty area is not wasted: it is what makes the subject feel small, alone or free.</p>
+          <div class="photo-grid">
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/855.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse class="mk" cx="88" cy="85.5" rx="3" ry="11"/></svg><span class="tag" style="left:55%;top:60%">A tiny subject</span><span class="tag" style="left:8%;top:30%">Empty yellow space</span></div>
+              <figcaption><b>Yellow wall.</b> One small figure at the edge of a huge flat color. Your eye goes straight to the only detail.<span class="credit">Photo: Rodion Kutsaev (Unsplash)</span></figcaption>
+            </figure>
+            <figure class="photo-ex">
+              <div class="ph"><img src="images/composition/300.jpg" alt="" loading="lazy"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse class="mk" cx="47" cy="90" rx="6" ry="8"/></svg><span class="tag" style="left:50%;top:78%">One hay bale</span><span class="tag" style="left:8%;top:30%">White sky as negative space</span></div>
+              <figcaption><b>Hay bale.</b> Almost the whole frame is empty white sky, so the single bale in front reads clearly.<span class="credit">Photo: Pavel Voinov (Unsplash)</span></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="ch-sec" id="gallerySec">
+          <h3>Example gallery: real photos by subject</h3>
+          <p>Trees, mountains, flowers, cars, cities, animals, people, water, food and night skies. Filter by subject or by technique, then click any photo to see it large with a thirds grid and the explanation. Use the arrow keys to move through them.</p>
+          <div class="gal-filters">
+            <div class="seg gal-cats" id="galCats"></div>
+            <label class="gal-tech"><span>Technique</span><select id="galTech" class="select small"></select></label>
+          </div>
+          <div class="gal-grid" id="galGrid"></div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Which crop is better?</h3>
+          <p>Cropping is composing after the fact. Each question shows three crops of the same photo. Pick the one you think works best, then read why.</p>
+          <div class="crop-quiz" data-img="1055" data-answer="1">
+            <p class="cq-q"><b>1. A beach horizon.</b> Where should the horizon go?</p>
+            <div class="cq-opts">
+              <button class="cq-opt" data-crop="20,22,60,60"><span class="cq-thumb"></span><b>A</b> Horizon in the middle</button>
+              <button class="cq-opt" data-crop="20,34,60,60"><span class="cq-thumb"></span><b>B</b> Horizon on the upper third</button>
+              <button class="cq-opt" data-crop="20,14,60,60"><span class="cq-thumb"></span><b>C</b> Horizon on the lower third</button>
+            </div>
+            <p class="cq-why" hidden><b>B works best.</b> The sky is flat grey, while the wet sand holds reflections and texture. Putting the horizon on the upper third gives two thirds of the frame to the interesting part. A splits the photo into two equal halves that compete, and C fills the frame with dull sky.</p>
+          </div>
+          <div class="crop-quiz" data-img="1005" data-answer="0">
+            <p class="cq-q"><b>2. A portrait looking right.</b> Where should the person go?</p>
+            <div class="cq-opts">
+              <button class="cq-opt" data-crop="33,15,60,60"><span class="cq-thumb"></span><b>A</b> On the left third, looking into the frame</button>
+              <button class="cq-opt" data-crop="13,15,60,60"><span class="cq-thumb"></span><b>B</b> On the right third, looking out</button>
+              <button class="cq-opt" data-crop="23,38,60,60"><span class="cq-thumb"></span><b>C</b> Tight crop through the head</button>
+            </div>
+            <p class="cq-why" hidden><b>A works best.</b> Leave space in the direction someone looks or moves (called lead room or looking room). In B she stares at the edge of the frame, which feels cramped and tense. C cuts through the face: if you crop a person, cut between joints, never across the eyes, chin, knees or wrists.</p>
+          </div>
+          <div class="crop-quiz" data-img="853" data-answer="1">
+            <p class="cq-q"><b>3. The sea rock.</b> Which crop tells the story best?</p>
+            <div class="cq-opts">
+              <button class="cq-opt" data-crop="46,46,54,54"><span class="cq-thumb"></span><b>A</b> Rock dead center, no horizon</button>
+              <button class="cq-opt" data-crop="0,0,100,100"><span class="cq-thumb"></span><b>B</b> Rock on a third, horizon included</button>
+              <button class="cq-opt" data-crop="10,30,70,70"><span class="cq-thumb"></span><b>C</b> Rock cut by the edge</button>
+            </div>
+            <p class="cq-why" hidden><b>B works best.</b> The rock on a thirds crossing plus the horizon and empty sea give context and calm. A loses the sense of place and feels like a record shot. C slices the subject at the frame edge, which always looks like a mistake.</p>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Crop trainer</h3>
+          <p>Drag the box to move it and drag its corners to resize. The thirds grid moves with your crop, and the feedback updates as you go. Try each photo and each shape.</p>
+          <div class="trainer" id="trainer">
+            <div class="tr-bar">
+              <div class="seg tr-imgs">
+                <button data-tr-img="505">Sunset</button><button data-tr-img="853">Sea rock</button><button data-tr-img="1005">Portrait</button><button data-tr-img="447">Lake</button>
+              </div>
+              <div class="seg tr-ratios">
+                <button data-tr-ratio="1.5">3:2</button><button data-tr-ratio="0.8">4:5</button><button data-tr-ratio="1">1:1</button><button data-tr-ratio="1.7778">16:9</button>
+              </div>
+            </div>
+            <div class="tr-stage"><img id="trImg" alt="Photo to crop"><div class="tr-crop" id="trCrop"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i></div></div>
+            <div class="tr-foot">
+              <ul class="tr-feedback" id="trFeedback"></ul>
+              <div class="tr-actions"><button class="try" id="trGood">Show a good crop</button><button class="try" id="trReset">Reset</button></div>
+            </div>
+            <p class="credit">Photos: lee Scott, Stephen Radford, Matthew Wiebe, Joshua Earle (Unsplash)</p>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Rules are tools</h3>
+          <p>None of these are laws. Center the subject for symmetry, put the horizon in the middle for a perfect reflection, fill the frame for intimacy. Learn the guidelines so that when you break one, you do it on purpose.</p>
+          <p class="credit">All photos in this chapter are from Unsplash (Unsplash License, free to use), served through Lorem Picsum. Photographers: lee Scott, Stephen Radford, Christian Holzinger, Bec Brown, Jon Ottosson, Martin Wessely, Bertrand Zuchuat, Ales Krivec, Rodion Kutsaev, Pavel Voinov, Neil Thomas, Matthew Wiebe, Joshua Earle. The 59 gallery photos credit their photographers when you open them.</p>
+        </section>
+      </article>
+
+      <!-- 11 ============================================================ -->
+      <article class="chapter" id="ch-practice" data-title="Putting it together" data-focus="aperture,shutter,iso,focus">
+        <header class="ch-head">
+          <span class="ch-num">Chapter 11</span>
+          <h2>Putting it together</h2>
+          <p class="ch-lead">A simple order of decisions that works for most photos, a live checklist for your current settings, and four challenges to practise.</p>
+        </header>
+
+        <section class="ch-sec">
+          <h3>A shooting workflow</h3>
+          <ol class="steps">
+            <li><b>Subject and background.</b> What is the photo about, and what is behind it?</li>
+            <li><b>Position and focal length.</b> Where you stand sets the perspective. The focal length sets the framing.</li>
+            <li><b>Aperture for the look.</b> Wide for a soft background, narrow for everything sharp.</li>
+            <li><b>Shutter for motion.</b> Fast enough to freeze movement and avoid shake.</li>
+            <li><b>ISO last.</b> Only as high as needed to get the brightness right.</li>
+            <li><b>Focus</b> on the most important part, usually the eyes.</li>
+            <li><b>Check the meter and the edges,</b> then take the photo.</li>
+          </ol>
+        </section>
+
+        <section class="ch-sec">
+          <div class="panel tips-panel live-block">
+            <div class="panel-head">
+              <div><h3>Shot checklist</h3><p class="sub">Live check of the lab's current settings.</p></div>
+              <button class="primary" id="layeredBtn">Set up a layered portrait</button>
+            </div>
+            <div id="checklist"></div>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <h3>Challenges</h3>
+          <p>Each challenge loads a scene with something wrong. Fix it with the lab until the checklist is happy, then compare with the solution.</p>
+          <div class="challenges">
+            <div class="challenge">
+              <b>1. Night portrait</b>
+              <p>It is dark, you are handheld, and the photo is black. Get a bright, sharp photo of the person.</p>
+              <button class="try" data-setup='{"scene":"night","handheld":true,"N":5.6,"t":"1/125","iso":100}'>Load challenge</button>
+              <details><summary>Show a solution</summary><p>Open to f/1.8 (less depth, more light), keep about 1/60 s (safe for 50 mm), then raise ISO to around 1600 to 3200.</p><button class="try" data-setup='{"scene":"night","handheld":true,"N":1.8,"t":"1/60","iso":1600}'>Load solution</button></details>
+            </div>
+            <div class="challenge">
+              <b>2. Freeze the car</b>
+              <p>The car is a streak. Freeze it without making the photo dark.</p>
+              <button class="try" data-setup='{"f":35,"N":11,"t":"1/8","rays":{"car":true}}'>Load challenge</button>
+              <details><summary>Show a solution</summary><p>1/1000 s freezes it. That is 7 stops less light than 1/8 s, so open to f/2.8 (4 stops) and raise ISO to 800 (3 stops).</p><button class="try" data-setup='{"f":35,"N":2.8,"t":"1/1000","iso":800,"rays":{"car":true}}'>Load solution</button></details>
+            </div>
+            <div class="challenge">
+              <b>3. Dreamy background</b>
+              <p>The wall is sharp and busy. Make it as soft as you can while the person stays sharp.</p>
+              <button class="try" data-setup='{"N":11,"t":"1/8","wallD":5}'>Load challenge</button>
+              <details><summary>Show a solution</summary><p>Use a longer lens and step back, open wide, and put distance behind the person.</p><button class="try" data-setup='{"f":135,"N":2,"t":"1/250","subjD":10.8,"focus":10.8,"wallD":40}'>Load solution</button></details>
+            </div>
+            <div class="challenge">
+              <b>4. Everything sharp</b>
+              <p>Leaves, person and wall should all look sharp, like a landscape photo.</p>
+              <button class="try" data-setup='{"f":24,"N":1.8,"t":"1/320","rays":{"fg":true,"subj":true,"wall":true}}'>Load challenge</button>
+              <details><summary>Show a solution</summary><p>Close to f/11 and focus around 2 m. With a wide lens that keeps everything from about 1 m to infinity sharp (the hyperfocal idea). Slow the shutter to keep the brightness.</p><button class="try" data-setup='{"f":24,"N":11,"t":"1/8","focus":2,"rays":{"fg":true,"subj":true,"wall":true}}'>Load solution</button></details>
+            </div>
+          </div>
+        </section>
+
+        <section class="ch-sec">
+          <details class="tips" open>
+            <summary>Technique tips for a great photo</summary>
+            <ol>
+              <li><b>Layer it:</b> soft foreground, sharp subject, soft background.</li>
+              <li><b>Guide the eye</b> with leading lines that point at the subject.</li>
+              <li><b>Place the subject</b> on a third, or center it on purpose.</li>
+              <li><b>Focus on the eyes</b> in portraits.</li>
+              <li><b>Separate the subject:</b> f/1.8 to f/2.8, 50 to 135 mm, distance behind.</li>
+              <li><b>Watch the light:</b> golden hour is soft and warm, midday is harsh.</li>
+              <li><b>Choose your height:</b> eye level, low for power, high for smallness.</li>
+              <li><b>Keep the edges clean</b> and nothing growing out of heads.</li>
+              <li><b>Settings order:</b> aperture for the look, shutter for motion, ISO last.</li>
+            </ol>
+          </details>
+          <p class="end-note">You have finished Course 1. Keep experimenting in the lab: every number you see is calculated from real optics.</p>
+        </section>
+      </article>
     </div>
+  </section>
 
-    <div class="ctl" data-ctl="lens">
-      <div class="ctl-head"><label for="lensType">Lens</label></div>
-      <select id="lensType" class="select" data-lens-select>
-        <option value="prime">Prime lens (one fixed focal length)</option>
-        <option value="zoom">Zoom lens (24 to 200 mm, f/3.5 to f/5.6)</option>
-      </select>
-      <label class="switch zoom-groups" id="zoomGroupsRow"><input type="checkbox" id="zoomGroups" data-zoom-groups checked><span>Show the moving glass groups</span></label>
-      <p class="hint" id="lensHint"></p>
-    </div>
+  <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the course and the lab" tabindex="0" title="Drag to resize. Double-click to reset."></div>
 
-    <div class="ctl" data-ctl="focal">
-      <div class="ctl-head"><label for="fl">Focal length</label><output id="flOut" class="val"></output></div>
-      <input type="range" id="fl" min="0" max="1000" step="1">
-      <div class="chips" id="flPresets"></div>
-      <p class="hint" id="flHint"></p>
-    </div>
-
-    <div class="ctl" data-ctl="sensor">
-      <div class="ctl-head"><label>Sensor size</label><output id="senOut" class="val"></output></div>
-      <div class="seg" id="sensorSeg"></div>
-      <p class="hint" id="senHint"></p>
-    </div>
-
-    <div class="ctl" data-ctl="focus">
-      <div class="ctl-head"><label for="focus">Focus distance</label><output id="focusOut" class="val"></output></div>
-      <input type="range" id="focus" min="0" max="1000" step="1">
-      <div class="chips" id="focusPresets"></div>
-      <label class="switch macro"><input type="checkbox" id="macro"><span>Macro lens (focuses much closer)</span></label>
-      <p class="hint" id="focusHint"></p>
-    </div>
-
-    <div class="ctl" data-ctl="shutter">
-      <div class="ctl-head"><label for="sh">Shutter speed</label><output id="shOut" class="val"></output></div>
-      <input type="range" id="sh" min="0" max="36" step="1">
-      <div class="ends"><span>fast (freezes)</span><span>slow (smears)</span></div>
-      <p class="hint" id="shHint"></p>
-    </div>
-
-    <div class="ctl" data-ctl="iso">
-      <div class="ctl-head"><label for="iso">ISO</label><output id="isoOut" class="val"></output></div>
-      <input type="range" id="iso" min="0" max="22" step="1">
-      <div class="ends"><span>clean</span><span>grainy</span></div>
-      <p class="hint" id="isoHint"></p>
-    </div>
-
-    <div class="ctl" data-ctl="scene">
-      <div class="ctl-head"><label>Light in the scene</label><output id="sceneOut" class="val"></output></div>
-      <div class="seg" id="sceneSeg"></div>
-    </div>
-
-    <div class="ctl" data-ctl="handheld">
-      <label class="switch"><input type="checkbox" id="handheld"><span>Handheld (hands shake a little)</span></label>
-    </div>
-    </div>
-  </aside>
-
-  <section class="stage">
-    <section class="lessons">
-      <nav class="lesson-nav" id="lessonNav" aria-label="Lessons"></nav>
-      <article class="lesson-card" id="lessonCard"></article>
-    </section>
-
-    <div class="panel">
-      <div class="panel-head">
-        <div>
-          <h2>Inside the camera</h2>
-          <p class="sub">Side view. Light travels from the scene on the left into the camera on the right. Click a subject to focus on it. Drag it up or down (the person also left or right).</p>
-        </div>
+  <!-- ============================================================ LAB -->
+  <section class="lab" id="lab" aria-label="Lab">
+    <div class="panel lab-diagram" id="diagramPanel">
+      <div class="lab-head">
+        <div><h2>Inside the camera</h2><span class="lab-chapter" id="labChapter"></span></div>
         <div class="ray-toggles" id="rayToggles"></div>
       </div>
       <div class="diagram-box">
         <div class="diagram-wrap"><canvas id="diagram"></canvas></div>
-        <p class="view-hint">Zoom: buttons, or Ctrl/⌘ + scroll, or pinch. When zoomed, drag empty space to move around. Drag the lens to focus. With the zoom lens, drag the front or rear glass group to zoom.</p>
+      </div>
+      <div class="lab-tools">
+        <button class="primary small" id="playLight">▶ Play light</button>
+        <div class="ls-body light-sim">
+          <div class="ls-bar"><div id="lightBar"></div></div>
+          <p id="lightStats">Click subjects to focus. Drag subjects, the green focus line, the lens or the blades.</p>
+        </div>
         <div class="view-ctl" role="toolbar" aria-label="Diagram zoom">
           <button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button>
           <span id="zoomLevel">100%</span>
-          <button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+          <button id="zoomIn" title="Zoom in (or Ctrl/⌘ + scroll)" aria-label="Zoom in">+</button>
           <button id="zoomLens" class="txt" title="Zoom to the lens and sensor">Lens close-up</button>
-          <button id="zoomReset" class="txt" title="Show the whole diagram">Reset</button>
+          <button id="zoomReset" class="txt" title="Show the whole diagram">Fit</button>
+          <button id="fullscreenDiagram" title="Show the simulator in full screen (Esc to exit)" aria-label="Simulator full screen">⛶</button>
         </div>
+        <details class="view-opts">
+          <summary>View</summary>
+          <div class="view-pop">
+            <label class="switch"><input type="checkbox" id="exaggerate" checked><span>Stretch focus shifts so they are easy to see</span></label>
+            <label class="switch"><input type="checkbox" id="everywhere"><span>Light goes everywhere</span></label>
+            <label class="foot-select"><span>Current lens</span>
+              <select id="lensType2" class="select small" data-lens-select>
+                <option value="prime">Prime lens</option>
+                <option value="zoom">Zoom lens (24 to 200 mm)</option>
+              </select></label>
+            <label class="switch" id="zoomGroupsRow2"><input type="checkbox" id="zoomGroups2" data-zoom-groups checked><span>Show the moving glass groups</span></label>
+            <p class="note">Scene distances use a log scale. Inside the camera sizes are to scale. Zoom: Ctrl/⌘ + scroll or pinch, drag empty space to move.</p>
+          </div>
+        </details>
       </div>
-      <div class="panel-foot">
-        <div class="foot-toggles"><label class="switch"><input type="checkbox" id="exaggerate" checked><span>Stretch focus shifts so they are easy to see</span></label>
-          <label class="switch"><input type="checkbox" id="everywhere"><span>Light goes everywhere (not only toward the lens)</span></label>
-          <label class="foot-select"><span>Current lens</span>
-            <select id="lensType2" class="select small" data-lens-select>
-              <option value="prime">Prime lens</option>
-              <option value="zoom">Zoom lens (24 to 200 mm)</option>
-            </select></label>
-          <label class="switch" id="zoomGroupsRow2"><input type="checkbox" id="zoomGroups2" data-zoom-groups checked><span>Show the moving glass groups</span></label></div>
-        <span class="note">Scene distances use a log scale. Inside the camera sizes are to scale.</span>
-      </div>
-      <div class="light-sim">
-        <button class="primary" id="playLight">▶ Play light</button>
-        <div class="ls-body">
-          <div class="ls-bar"><div id="lightBar"></div></div>
-          <p id="lightStats">Watch light leave each subject and see which part the aperture lets through.</p>
-        </div>
-      </div>
-      <div class="zoom-explain" id="zoomExplain"></div>
-      <div class="focus-explain" id="focusExplain"></div>
-      <div class="bokeh-explain" id="bokehExplain"></div>
-      <div class="ap-explain" id="apExplain"></div>
     </div>
 
-  </section>
-
-  <aside class="side side-right" id="rightSide">
-    <button class="rail" data-collapse="right" title="Show photo preview" aria-label="Show photo preview">
-      <span class="rail-icon">«</span><span class="rail-text">Photo preview</span>
-    </button>
-    <div class="preview">
-      <div class="side-head"><h2>Preview</h2><button class="collapse-btn" data-collapse="right" title="Hide preview" aria-label="Hide preview">»</button></div>
-      <div class="panel">
-        <div class="panel-head">
-          <div><h2>The photo</h2><p class="sub">What the sensor records. Click anything to focus on it. Drag up or down to move the person.</p></div>
-          <div class="head-btns"><button class="ghost" id="flip">See it as the sensor does</button><button class="primary" id="shoot">Take photo</button></div>
+    <div class="lab-bottom">
+      <div class="panel lab-photo" id="photoPanel">
+        <div class="lab-photo-head" data-drag="photo">
+          <h2>Photo</h2>
+          <div class="head-btns">
+            <button class="ghost small" id="guidesBtn" title="Rule of thirds and layers">Guides</button>
+            <button class="ghost small" id="flip" title="Show it upside down, as it lands on the sensor">Sensor view</button>
+            <button class="primary small" id="shoot">Take photo</button>
+            <div class="more-menu"><button class="more-btn" data-more aria-label="Panel options" aria-haspopup="true" title="Panel options">⋮</button><div class="more-pop" hidden><button data-float="photo">Float panel</button><button data-fullscreen="#photoPanel">Full screen</button></div></div>
+          </div>
         </div>
         <div class="photo-wrap">
-          <canvas id="photo"></canvas>
+          <canvas id="photo" title="Click to focus. Drag to move the person: up or down changes distance, left or right changes position."></canvas>
           <div class="curtain" id="cur1"></div>
           <div class="curtain" id="cur2"></div>
           <div class="badge" id="badge"></div>
           <div class="af" id="af"></div>
+          <canvas id="guides" class="hidden"></canvas>
         </div>
         <div class="meter-row">
           <div class="meter">
@@ -179,7 +810,7 @@
           </div>
           <div class="meter-text"><strong id="meterVal"></strong><span id="meterMsg"></span></div>
           <div class="fix">
-            <span>Fix brightness with</span>
+            <span>Fix with</span>
             <button data-fix="shutter">Shutter</button>
             <button data-fix="iso">ISO</button>
             <button data-fix="aperture">Aperture</button>
@@ -187,19 +818,114 @@
         </div>
       </div>
 
-        <div class="panel">
-          <h2>Blur spots on the sensor</h2>
+      <div class="panel lab-tabs" id="tabsPanel">
+        <div class="tabs-row" data-drag="tabs">
+          <div class="tabs" role="tablist">
+            <button data-tab-btn="settings" role="tab">Settings</button>
+            <button data-tab-btn="numbers" role="tab">Numbers</button>
+            <button data-tab-btn="spots" role="tab">Blur spots</button>
+          </div>
+          <div class="more-menu"><button class="more-btn" data-more aria-label="Panel options" aria-haspopup="true" title="Panel options">⋮</button><div class="more-pop" hidden><button data-float="tabs">Float panel</button></div></div>
+        </div>
+
+        <div class="tab-body controls" data-tab="settings">
+          <div class="ctl" data-ctl="aperture">
+            <div class="ctl-head"><label for="ap">Aperture</label><output id="apOut" class="val"></output></div>
+            <div class="iris-row">
+              <canvas id="iris" aria-hidden="true"></canvas>
+              <div class="grow">
+                <input type="range" id="ap" min="0" max="24" step="1">
+                <div class="ap-limit hidden" id="apLimit"><div class="ap-limit-bar" id="apLimitBar"></div><span id="apLimitText"></span></div>
+                <div class="ends"><span>wide open</span><span>closed down</span></div>
+              </div>
+            </div>
+            <p class="hint" id="apHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="lens">
+            <div class="ctl-head"><label for="lensType">Lens</label></div>
+            <select id="lensType" class="select" data-lens-select>
+              <option value="prime">Prime lens (one fixed focal length)</option>
+              <option value="zoom">Zoom lens (24 to 200 mm, f/3.5 to f/5.6)</option>
+            </select>
+            <label class="switch zoom-groups" id="zoomGroupsRow"><input type="checkbox" id="zoomGroups" data-zoom-groups checked><span>Show the moving glass groups</span></label>
+            <p class="hint" id="lensHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="focal">
+            <div class="ctl-head"><label for="fl">Focal length</label><output id="flOut" class="val"></output></div>
+            <input type="range" id="fl" min="0" max="1000" step="1">
+            <div class="chips" id="flPresets"></div>
+            <p class="hint" id="flHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="sensor">
+            <div class="ctl-head"><label>Sensor size</label><output id="senOut" class="val"></output></div>
+            <div class="seg" id="sensorSeg"></div>
+            <p class="hint" id="senHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="focus">
+            <div class="ctl-head"><label for="focus">Focus distance</label><output id="focusOut" class="val"></output></div>
+            <input type="range" id="focus" min="0" max="1000" step="1">
+            <div class="chips" id="focusPresets"></div>
+            <label class="switch macro"><input type="checkbox" id="macro"><span>Macro lens (focuses much closer)</span></label>
+            <p class="hint" id="focusHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="shutter">
+            <div class="ctl-head"><label for="sh">Shutter speed</label><output id="shOut" class="val"></output></div>
+            <input type="range" id="sh" min="0" max="36" step="1">
+            <div class="ends"><span>fast (freezes)</span><span>slow (smears)</span></div>
+            <p class="hint" id="shHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="iso">
+            <div class="ctl-head"><label for="iso">ISO</label><output id="isoOut" class="val"></output></div>
+            <input type="range" id="iso" min="0" max="22" step="1">
+            <div class="ends"><span>clean</span><span>grainy</span></div>
+            <p class="hint" id="isoHint"></p>
+          </div>
+
+          <div class="ctl" data-ctl="scene">
+            <div class="ctl-head"><label>Light in the scene</label><output id="sceneOut" class="val"></output></div>
+            <div class="seg" id="sceneSeg"></div>
+          </div>
+
+          <div class="ctl" data-ctl="handheld">
+            <label class="switch"><input type="checkbox" id="handheld"><span>Handheld (hands shake a little)</span></label>
+          </div>
+        </div>
+
+        <div class="tab-body hidden" data-tab="numbers">
+          <dl class="stats" id="stats"></dl>
+        </div>
+
+        <div class="tab-body hidden" data-tab="spots">
           <p class="sub">A point of light only stays a point when it is in focus. Otherwise it lands as a disc.</p>
           <canvas id="spots"></canvas>
         </div>
-        <div class="panel">
-          <h2>Numbers</h2>
-          <dl class="stats" id="stats"></dl>
-        </div>
+      </div>
     </div>
-  </aside>
+  </section>
 </main>
 
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-inner">
+    <div class="lb-photo"><img id="lbImg" alt=""><div class="lb-grid" id="lbGrid"></div>
+      <button class="lb-nav prev" id="lbPrev" aria-label="Previous photo">‹</button><button class="lb-nav next" id="lbNext" aria-label="Next photo">›</button></div>
+    <div class="lb-info">
+      <div class="lb-top"><span class="lb-count" id="lbCount"></span><button class="lb-close" id="lbClose" aria-label="Close">✕</button></div>
+      <h3 id="lbTitle"></h3>
+      <div class="lb-tags" id="lbTags"></div>
+      <p id="lbText"></p>
+      <label class="switch"><input type="checkbox" id="lbThirds" checked><span>Show thirds grid</span></label>
+      <p class="credit" id="lbCredit"></p>
+    </div>
+  </div>
+</div>
+
+<script src="gallery-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
