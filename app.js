@@ -1299,9 +1299,15 @@
     $('#lessonNav').innerHTML = LESSONS.map((l, i) => `<button data-lesson="${i}"><b>${i + 1}</b>${l.short}</button>`).join('');
 
     $('#ap').addEventListener('input', (e) => {
-      S.N = APERTURES[+e.target.value];
+      const wanted = APERTURES[+e.target.value];
+      S.N = wanted;
       photons.passed = photons.blocked = 0;
       clampAperture(); update();
+      const hint = $('#apHint');
+      if (S.N !== wanted) {
+        hint.textContent = `This ${isZoom() ? 'zoom ' : ''}lens cannot open to f/${wanted} at ${S.f} mm. f/${S.N} is the widest it goes here.${isZoom() ? ' Zoom out to open wider.' : ''}`;
+        hint.classList.remove('flash'); void hint.offsetWidth; hint.classList.add('flash');
+      }
     });
     $('#fl').addEventListener('input', (e) => {
       S.f = Math.round(posToF(+e.target.value));
@@ -1365,6 +1371,10 @@
   function sync() {
     const sen = SENSORS[S.sensor], v = imgDist(S.f, S.focus), D = S.f / S.N;
     $('#ap').value = APERTURES.indexOf(S.N);
+    const wideIdx = APERTURES.findIndex((a) => a >= minN(S.f) - 0.01);
+    $('#apLimitBar').style.width = `${(wideIdx / (APERTURES.length - 1)) * 100}%`;
+    $('#apLimit').classList.toggle('hidden', wideIdx === 0);
+    $('#apLimitText').textContent = wideIdx > 0 ? `wider than f/${APERTURES[wideIdx]} not possible at ${S.f} mm` : '';
     $('#apOut').textContent = `f/${S.N}`;
     const lo = minN(S.f);
     $('#apHint').textContent = lo > 1.41
@@ -1451,7 +1461,9 @@
         </div>
         <div>
           <table class="fm-table"><thead><tr><th>Zoom ring at</th><th>Group spacing</th><th>Widest aperture</th></tr></thead><tbody>${rows}</tbody></table>
-          <p><b>Why the widest aperture gets smaller when you zoom in.</b> The f-number is focal length ÷ opening. The opening inside this lens stays about the same size, so at a longer focal length the same hole is a bigger f-number: f/3.5 at 24 mm becomes f/5.6 at 200 mm. Pricier "constant f/2.8" zooms use bigger glass to avoid this.</p>
+          <p><b>The aperture is not fixed.</b> You can always close it down to f/22. What changes as you zoom is the <b>widest</b> it can open: f/${ZOOM.nWide} at ${ZOOM.min} mm up to f/${ZOOM.nTele} at ${ZOOM.max} mm. <span class="live">At ${S.f} mm the widest is f/${minN(S.f).toFixed(1)}, so the nearest stop is f/${APERTURES.find((a) => a >= minN(S.f) - 0.01)}. You are at f/${S.N}.</span></p>
+          <p><b>Why the widest gets smaller when you zoom in.</b> The f-number is focal length ÷ opening. The opening, as seen through the front glass, does grow as you zoom in (${(ZOOM.min / ZOOM.nWide).toFixed(1)} mm at ${ZOOM.min} mm, ${(ZOOM.max / ZOOM.nTele).toFixed(1)} mm at ${ZOOM.max} mm), but slower than the focal length, so the f-number rises. Zooming in pushes a too-wide aperture to the widest allowed. Zooming back out does not widen it again by itself.</p>
+          <p><b>Variable vs constant aperture.</b> Variable zooms (f/3.5 to f/5.6) are small and cheap. Constant aperture zooms (for example 24 to 70 mm f/2.8) open to f/2.8 at every focal length, which needs bigger, heavier, pricier front glass.</p>
           <p><b>Zoom vs prime:</b> a zoom gives many focal lengths in one lens. A prime is usually smaller, sharper and opens wider (f/1.4 to f/1.8) because it only has to work at one focal length.</p>
         </div>
       </div>`;
@@ -1880,6 +1892,8 @@
     const hitLens = (G, x, y) => {
       if (Math.abs(y - G.cy) > G.gH + 14) return null;
       const LG = lensGroups(G), fx = G.lensX - LG.gf, rx = G.lensX + LG.gr;
+      // the aperture blades: drag up or down to open or close
+      if (Math.abs(x - G.lensX) < 7 && Math.abs(y - G.cy) >= G.aH - 5) return 'blades';
       if (isZoom()) {
         if (Math.abs(x - fx) < 11) return 'front';
         if (Math.abs(x - rx) < 11) return 'rear';
@@ -1930,7 +1944,13 @@
         clampView(); drawDiagram(); return;
       }
       if (drag && drag.el === dc && drag.lensPart) {
-        if (drag.lensPart === 'front' || drag.lensPart === 'rear') {
+        if (drag.lensPart === 'blades') {
+          // blade edge position sets the opening: N = f / D
+          const D = (2 * Math.max(1, Math.abs(y - G.cy))) / G.sc;
+          const want = clamp(S.f / D, minN(S.f), 22);
+          S.N = APERTURES.find((a) => a >= want - 0.01) || 22;
+          clampAperture();
+        } else if (drag.lensPart === 'front' || drag.lensPart === 'rear') {
           // moving a group changes the spacing, which changes the focal length
           const dx = x - drag.x0;
           const sp = clamp(drag.s0 + (drag.lensPart === 'rear' ? dx : -dx) / 1.1, zoomSpacing(ZOOM.max), zoomSpacing(ZOOM.min));
@@ -1961,7 +1981,8 @@
         }
       } else {
         const key = hitObject(G, x, y);
-        dc.style.cursor = key ? 'grab' : hitFocusLine(G, x, y) || hitLens(G, x, y) ? 'ew-resize' : view.scale > 1.001 ? 'move' : '';
+        const lp = !key && hitLens(G, x, y);
+        dc.style.cursor = key ? 'grab' : lp === 'blades' ? 'ns-resize' : hitFocusLine(G, x, y) || lp ? 'ew-resize' : view.scale > 1.001 ? 'move' : '';
       }
     });
 
