@@ -311,6 +311,51 @@
         </section>
 
         <section class="ch-sec">
+          <h3>Why a longer lens blurs more at the same f-number</h3>
+          <p>Same f/2.8, same background 5 m behind the person, yet an 85 mm lens melts the background and a 14 mm lens keeps it almost sharp. Two reasons:</p>
+          <ol class="steps">
+            <li><b>The hole is physically bigger.</b> The f-number is focal length ÷ opening, so f/2.8 is a <b>5 mm</b> opening on a 14 mm lens but a <b>30 mm</b> opening on an 85 mm lens. Light from each background point arrives as a cone as wide as that opening, so the cone and the blur disc it makes are about six times bigger. The f-number keeps the <i>brightness</i> equal, not the blur.</li>
+            <li><b>The background is magnified.</b> A long lens shows a small slice of the background blown up to fill the frame, blur included. A wide lens shrinks a huge area into the frame, so even blurry details end up small and look sharp.</li>
+          </ol>
+          <figure class="blur-compare">
+            <div class="bc-ctrl">
+              <div class="seg" id="bcN"><span>Aperture</span><button data-bc-n="1.8">f/1.8</button><button data-bc-n="2.8">f/2.8</button><button data-bc-n="5.6">f/5.6</button></div>
+              <div class="seg" id="bcMode"><span>Setup</span><button data-bc-mode="spot">Same spot (person 3.5 m)</button><button data-bc-mode="frame">Same framing</button></div>
+            </div>
+            <div class="bc-panels" id="bcPanels"></div>
+            <figcaption class="bc-legend"><span><i class="lg-bg"></i>light from the background (5 m behind the person)</span><span><i class="lg-subj"></i>light from the person (in focus)</span><span>Opening widths are to scale. The tiny focus shift behind the lens is stretched ×20 so you can see it. Blur discs on the right are magnified ×100.</span></figcaption>
+          </figure>
+          <h4 class="sub-h">Following the same light through two lenses</h4>
+          <p>Below, the same background point sends the same light toward a 24 mm and an 85 mm lens, both at f/2.8, focused on a person 3.5 m away. The background is 8.5 m away.</p>
+          <figure class="same-ray" id="sameRay"></figure>
+          <div class="math-box">
+            <p><b>Where the two factors come from.</b> The blur disc on the sensor is</p>
+            <div class="eq">blur ≈ (f / N) × f × (1/s − 1/b) = f² / N × (1/s − 1/b)</div>
+            <p class="dim">f = focal length, N = f-number, s = subject distance, b = background distance (all in mm).</p>
+            <ul class="bul">
+              <li><b>First f, the opening.</b> f / N is the width of the hole. The same f/2.8 is 8.6 mm on 24 mm and 30.4 mm on 85 mm (3.5× wider). A wider hole collects steeper rays from each background point, so the light cone and the disc it makes are wider. This is the yellow ray in the diagram.</li>
+              <li><b>Second f, magnification.</b> A lens draws everything on the sensor at a size of roughly f / distance. The 85 mm lens draws the background 3.5× bigger, and the blur disc is part of that drawing, so it gets 3.5× bigger too.</li>
+              <li><b>Together:</b> 3.5 × 3.5 ≈ 12.5× more blur measured on the sensor (0.035 mm vs 0.43 mm).</li>
+              <li><b>Why the background shapes melt, not just grow.</b> The background details are also magnified 3.5×, so compared with their own size the blur still grows 3.5×, from the bigger opening alone. That is the difference between "a bigger sharp tree" and "a soft blob of a tree".</li>
+            </ul>
+          </div>
+
+          <p>Together, the blur grows roughly with <b>focal length squared</b>. Blur disc of the background on a full frame sensor at f/2.8:</p>
+          <table class="data"><thead><tr><th>Setup</th><th>14 mm</th><th>85 mm</th><th>Difference</th></tr></thead><tbody>
+            <tr><td>Same spot, person 3.5 m away</td><td>0.012 mm (looks sharp)</td><td>0.44 mm</td><td>about 37× more blur</td></tr>
+            <tr><td>Same framing: 14 mm from 0.58 m</td><td>0.11 mm</td><td>0.44 mm</td><td>still about 4× more blur</td></tr>
+          </tbody></table>
+          <p class="note-box">Anything under about 0.03 mm on full frame looks sharp. Walking closer helps the wide lens (a near subject means more blur) but cannot make up for an opening six times smaller, and the wide lens also shows far more busy background.</p>
+          <div class="samples">
+            <figure class="sample" data-sample='{"f":14,"N":2.8,"t":"1/125","subjD":3.5,"focus":3.5,"wallD":8.5}'><canvas></canvas><figcaption><b>14 mm, same spot</b> Wall almost sharp, person small.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":14,"N":2.8,"t":"1/125","subjD":0.58,"focus":0.58,"wallD":5.58}'><canvas></canvas><figcaption><b>14 mm, walked close</b> Same framing, a little blur.</figcaption></figure>
+            <figure class="sample" data-sample='{"f":85,"N":2.8,"t":"1/125","subjD":3.5,"focus":3.5,"wallD":8.5}'><canvas></canvas><figcaption><b>85 mm from 3.5 m</b> Background melts away.</figcaption></figure>
+          </div>
+          <div class="try-row"><span>Try it</span><button class="try" data-setup='{"f":14,"N":2.8,"t":"1/125","subjD":3.5,"focus":3.5,"wallD":8.5,"rays":{"wall":true,"subj":true,"bg":false}}'>14 mm at f/2.8</button><button class="try" data-setup='{"f":85,"N":2.8,"t":"1/125","subjD":3.5,"focus":3.5,"wallD":8.5,"rays":{"wall":true,"subj":true,"bg":false}}'>85 mm at f/2.8</button><button class="try" data-action="tab:spots">Show blur spots</button></div>
+          <p>Watch the orange cone from the wall in the diagram, the opening size in the aperture hint, and the Wall disc in the Blur spots tab.</p>
+        </section>
+
+        <section class="ch-sec">
           <h3>The shape of bokeh</h3>
           <p>Small lights show the single discs clearly. Each disc takes the shape of the aperture opening: round when wide open, a polygon of the blades when closed down. That is why some lenses are praised for "round bokeh": they have more, curved blades.</p>
           <div class="samples">

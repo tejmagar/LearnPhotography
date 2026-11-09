@@ -2560,6 +2560,123 @@
     setImage('505');
   }
 
+  /* --------------------- the same light through a 24 mm and an 85 mm lens */
+
+  function drawSameRay() {
+    const host = $('#sameRay'); if (!host) return;
+    const N = 2.8, S = 3500, B = 8500, TREE = 600;             // mm
+    const KX = 2, KY = 3.2, STRETCH = 20, INSET = 14;           // px per mm, focus shift stretch, inset scale
+    const W = 640, H = 230, cy = 112, sx = 440, bxObj = 20;
+    const testHalf = (85 / N / 2) * KY;                          // the yellow ray: edge of the 85 mm opening
+    const panel = (f, idx) => {
+      const D = f / N, v = (f * S) / (S - f), vb = (f * B) / (B - f);
+      const blur = (D * (v - vb)) / vb;                          // mm on the sensor
+      const lx = sx - v * KX, dh = (D / 2) * KY, glass = Math.max(dh + 8, (f / 1.4 / 2) * KY);
+      const bx = sx - (v - vb) * KX * STRETCH;
+      const spread = (dh * (sx - bx)) / Math.max(1, bx - lx);
+      const passes = testHalf <= dh + 0.5;
+      const yr = (x) => (cy - testHalf) + ((cy - (cy - testHalf)) * (x - lx)) / Math.max(1, bx - lx);   // yellow ray after the lens
+      const treeH = ((TREE * v) / B) * INSET, discPx = blur * INSET;
+      const ix = 560, iy = cy + 70;                               // inset tree base
+      return `
+      <div class="sr-panel">
+        <div class="sr-title"><b>${f} mm</b> at f/${N}: opening ${D.toFixed(1)} mm, blur disc ${blur.toFixed(3)} mm</div>
+        <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${f} millimetre lens: blur disc ${blur.toFixed(3)} millimetres">
+          <defs><filter id="srb${idx}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${Math.max(0.01, discPx / 3).toFixed(2)}"/></filter></defs>
+          <line x1="0" y1="${cy}" x2="${sx + 10}" y2="${cy}" class="bc-axis"/>
+          <circle cx="${bxObj}" cy="${cy}" r="4" class="sr-src"/>
+          <text x="${bxObj}" y="${cy + 18}" class="bc-t" text-anchor="start">background point</text>
+          <polygon points="${bxObj},${cy} ${lx},${cy - dh} ${lx},${cy + dh}" class="bc-cone-in"/>
+          <polygon points="${lx},${cy - dh} ${lx},${cy + dh} ${bx},${cy}" class="bc-cone-bg"/>
+          <polygon points="${bx},${cy} ${sx},${cy - spread} ${sx},${cy + spread}" class="bc-cone-bg"/>
+          <line x1="${bxObj}" y1="${cy}" x2="${lx}" y2="${cy + dh}" class="bc-ray-bg"/>
+          <line x1="${lx}" y1="${cy + dh}" x2="${sx}" y2="${cy - spread}" class="bc-ray-bg"/>
+          <line x1="${bxObj}" y1="${cy}" x2="${passes ? lx : lx - 6}" y2="${cy - testHalf}" class="sr-test"/>
+          ${passes
+            ? `<line x1="${lx}" y1="${cy - testHalf}" x2="${sx}" y2="${yr(sx)}" class="sr-test"/>
+               <text x="${(lx + sx) / 2}" y="${cy - testHalf - 6}" class="bc-t y" text-anchor="middle">same ray: passes the big opening</text>`
+            : `<g class="sr-x"><line x1="${lx - 12}" y1="${cy - testHalf - 6}" x2="${lx}" y2="${cy - testHalf + 6}"/><line x1="${lx - 12}" y1="${cy - testHalf + 6}" x2="${lx}" y2="${cy - testHalf - 6}"/></g>
+               <text x="${lx - 16}" y="${cy - testHalf - 8}" class="bc-t r" text-anchor="end">same ray: misses the small opening</text>`}
+          <ellipse cx="${lx}" cy="${cy}" rx="5" ry="${glass}" class="bc-lens"/>
+          <rect x="${lx - 2}" y="${cy - glass - 4}" width="4" height="${glass + 4 - dh}" class="bc-blade"/>
+          <rect x="${lx - 2}" y="${cy + dh}" width="4" height="${glass + 4 - dh}" class="bc-blade"/>
+          <text x="${lx}" y="${cy - glass - 10}" class="bc-t" text-anchor="middle">opening ${D.toFixed(1)} mm</text>
+          <rect x="${sx - 2}" y="${cy - 60}" width="5" height="120" class="bc-sensor"/>
+          <rect x="${sx - 3}" y="${cy - Math.max(spread, 1)}" width="7" height="${Math.max(spread * 2, 2)}" class="bc-spot"/>
+          <text x="${sx}" y="${cy + 76}" class="bc-t" text-anchor="middle">sensor</text>
+          <line x1="${sx - v * KX}" y1="${cy + 92}" x2="${sx}" y2="${cy + 92}" class="sr-dim"/>
+          <text x="${(sx - v * KX + sx) / 2}" y="${cy + 106}" class="bc-t dim" text-anchor="middle">lens to sensor ${v.toFixed(1)} mm</text>
+
+          <rect x="478" y="8" width="156" height="${H - 16}" rx="8" class="sr-inset"/>
+          <text x="556" y="26" class="bc-t" text-anchor="middle">on the sensor, ×${INSET}</text>
+          <g filter="url(#srb${idx})">
+            <rect x="${ix - treeH * 0.04}" y="${iy - treeH * 0.35}" width="${treeH * 0.08}" height="${treeH * 0.35}" class="sr-trunk"/>
+            <ellipse cx="${ix}" cy="${iy - treeH * 0.62}" rx="${treeH * 0.26}" ry="${treeH * 0.36}" class="sr-crown"/>
+            <circle cx="${ix + treeH * 0.1}" cy="${iy - treeH * 0.7}" r="${Math.max(0.6, treeH * 0.035)}" class="sr-light"/>
+          </g>
+          <text x="556" y="${iy + 18}" class="bc-t b" text-anchor="middle">tree ${((TREE * v) / B).toFixed(1)} mm tall</text>
+          <text x="556" y="${iy + 32}" class="bc-t dim" text-anchor="middle">${blur < 0.03 ? 'blur too small to see' : `blur ${blur.toFixed(2)} mm`}</text>
+        </svg>
+      </div>`;
+    };
+    host.innerHTML = panel(24, 0) + panel(85, 1) +
+      `<figcaption class="bc-legend"><span><i class="lg-bg"></i>light from one background point, through the opening</span><span><i class="lg-y"></i>one particular ray, the same in both pictures</span><span>Openings and image sizes are to scale. The focus shift behind the lens is stretched ×${STRETCH}. The inset shows a 0.6 m tall background tree as it lands on the sensor, magnified ×${INSET}, with its real blur.</span></figcaption>`;
+  }
+
+  /* ------------------------- light paths that make blur: 14 vs 50 vs 85 mm */
+
+  function setupBlurCompare() {
+    const box = $('#bcPanels'); if (!box) return;
+    let N = 2.8, mode = 'spot';
+    const LENSES = [14, 50, 85], GAP = 5;     // background is 5 m behind the person
+    const K = 2.4, STRETCH = 20, DISC = 100;  // px per mm, focus shift stretch, disc magnification
+    const ns = 'http://www.w3.org/2000/svg';
+    const draw = () => {
+      document.querySelectorAll('[data-bc-n]').forEach((b) => b.classList.toggle('on', +b.dataset.bcN === N));
+      document.querySelectorAll('[data-bc-mode]').forEach((b) => b.classList.toggle('on', b.dataset.bcMode === mode));
+      box.innerHTML = LENSES.map((f) => {
+        const s = mode === 'spot' ? 3.5 : (3.5 * f) / 85, b = s + GAP;
+        const D = f / N, v = imgDist(f, s), vb = imgDist(f, b);
+        const c = (D * (v - vb)) / vb;                      // blur disc diameter on the sensor, mm
+        const W = 330, H = 200, cy = 100, sx = 250;
+        const lx = sx - v * K, dh = (D * K) / 2;
+        const bx = sx - (v - vb) * K * STRETCH;             // where the background light meets
+        const spread = (dh * (sx - bx)) / Math.max(1, bx - lx);
+        const glass = Math.max(dh + 6, 14);
+        const r = Math.max(1.2, (c * DISC) / 2);
+        const sharp = c < 0.03;
+        return `
+        <div class="bc-panel">
+          <div class="bc-title"><b>${f} mm</b> at f/${N}${mode === 'frame' ? ` <span>person ${fmtD(s)} away</span>` : ''}</div>
+          <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${f} millimetre lens at f/${N}: blur disc ${c.toFixed(3)} millimetres">
+            <line x1="0" y1="${cy}" x2="${W}" y2="${cy}" class="bc-axis"/>
+            <polygon points="6,${cy} ${lx},${cy - dh} ${lx},${cy + dh}" class="bc-cone-in"/>
+            <polygon points="${lx},${cy - dh} ${lx},${cy + dh} ${sx},${cy}" class="bc-cone-subj"/>
+            <polygon points="${lx},${cy - dh} ${lx},${cy + dh} ${bx},${cy}" class="bc-cone-bg"/>
+            <polygon points="${bx},${cy} ${sx},${cy - spread} ${sx},${cy + spread}" class="bc-cone-bg"/>
+            <line x1="6" y1="${cy}" x2="${lx}" y2="${cy - dh}" class="bc-ray-bg"/><line x1="6" y1="${cy}" x2="${lx}" y2="${cy + dh}" class="bc-ray-bg"/>
+            <line x1="${lx}" y1="${cy - dh}" x2="${sx}" y2="${cy + spread}" class="bc-ray-bg"/><line x1="${lx}" y1="${cy + dh}" x2="${sx}" y2="${cy - spread}" class="bc-ray-bg"/>
+            <line x1="${lx}" y1="${cy - dh}" x2="${sx}" y2="${cy}" class="bc-ray-subj"/><line x1="${lx}" y1="${cy + dh}" x2="${sx}" y2="${cy}" class="bc-ray-subj"/>
+            <ellipse cx="${lx}" cy="${cy}" rx="5" ry="${glass}" class="bc-lens"/>
+            <rect x="${lx - 2}" y="${cy - glass - 6}" width="4" height="${glass + 6 - dh}" class="bc-blade"/>
+            <rect x="${lx - 2}" y="${cy + dh}" width="4" height="${glass + 6 - dh}" class="bc-blade"/>
+            <rect x="${sx - 2}" y="${cy - 40}" width="5" height="80" class="bc-sensor"/>
+            <rect x="${sx - 3}" y="${cy - Math.max(spread, 1)}" width="7" height="${Math.max(spread * 2, 2)}" class="bc-spot"/>
+            <circle cx="${sx + 45}" cy="${cy}" r="${r}" class="bc-disc"/>
+            <text x="${lx}" y="${cy - glass - 12}" class="bc-t" text-anchor="middle">opening ${D.toFixed(1)} mm</text>
+            <text x="${sx}" y="${cy + 56}" class="bc-t" text-anchor="middle">sensor</text>
+            <text x="${sx + 45}" y="${cy + Math.max(r, 10) + 16}" class="bc-t b" text-anchor="middle">${c.toFixed(c < 0.1 ? 3 : 2)} mm</text>
+            <text x="${sx + 45}" y="${cy - Math.max(r, 10) - 8}" class="bc-t dim" text-anchor="middle">blur disc</text>
+          </svg>
+          <div class="bc-verdict ${sharp ? 'sharp' : ''}">${sharp ? 'Background looks sharp' : `Background blur ${(c / 0.03).toFixed(0)}× the "sharp" limit`}</div>
+        </div>`;
+      }).join('');
+    };
+    document.querySelectorAll('[data-bc-n]').forEach((b) => b.addEventListener('click', () => { N = +b.dataset.bcN; draw(); }));
+    document.querySelectorAll('[data-bc-mode]').forEach((b) => b.addEventListener('click', () => { mode = b.dataset.bcMode; draw(); }));
+    draw();
+  }
+
   /* ------------------------------------------------- real-world example gallery */
 
   function setupGallery() {
@@ -2664,6 +2781,8 @@
   setupFullscreen();
   setupPhotoLessons();
   setupGallery();
+  setupBlurCompare();
+  drawSameRay();
   setupSamples();
   if (saved && saved.chapter) gotoChapter(saved.chapter);
   // index.html#play starts the light animation, #everywhere turns on "light goes everywhere"
